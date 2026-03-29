@@ -8,4 +8,5 @@ dependencies = [
     "fastapi[standard]>=0.135.2",
     "python-dotenv>=1.2.2",
     "sqlalchemy>=2.0.48",
+    "tzdata>=2025.3",
 ]
