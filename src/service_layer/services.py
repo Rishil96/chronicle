@@ -19,6 +19,7 @@ def add_log(session: Session, log_entry: str, use_llm: bool = True) -> None:
     session.add(new_log)
     session.commit()
 
+
 def get_logs(session: Session, single_date: date | None = None, from_date: date | None = None, to_date: date | None = None):
     """
     Function to read logs using 2 modes of filtering
@@ -43,7 +44,12 @@ def get_logs(session: Session, single_date: date | None = None, from_date: date 
 
 
 def update_log(session: Session, log_id: int, updated_log_entry: str, use_llm: bool = True):
-    raise NotImplementedError
+    """
+    Function to update a log entry using ID
+    """
+    log_to_update = session.execute(select(Logs).where(Logs.id == log_id)).scalars().one()
+    log_to_update.entry = updated_log_entry
+    session.commit()
 
 
 def delete_log(session: Session, log_id: int):
