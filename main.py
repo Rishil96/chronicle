@@ -1,6 +1,14 @@
-def main():
-    print("Hello from chronicle!")
+import logging
+from fastapi import FastAPI
 
 
-if __name__ == "__main__":
-    main()
+logger = logging.getLogger("chronicle")
+logger.setLevel(logging.INFO)
+
+
+app = FastAPI()
+@app.get("/")
+def home():
+    return {
+        "message": "Chronicle App!"
+    }
