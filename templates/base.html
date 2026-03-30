@@ -2,12 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    {% block title %}{% endblock %}
+    <title>{% block title %}{% endblock %}</title>
     <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body>
-  <nav></nav>
+  <nav class="bg-emerald-500 text-white p-4 flex items-center justify-between">
+      <span class="font-bold text-3xl">Chronicle</span>
+      <div class="flex gap-6 pr-4">
+          <a href="{{ url_for('home') }}" class="font-medium text-lg hover:text-emerald-100">Home</a>
+          <a href="{{ url_for('history') }}" class="font-medium text-lg hover:text-emerald-100">History</a>
+          <a href="{{ url_for('filter_logs') }}" class="font-medium text-lg hover:text-emerald-100">Filter</a>
+      </div>
+  </nav>
   <div>
     {% block content %}{% endblock %}
   </div>
