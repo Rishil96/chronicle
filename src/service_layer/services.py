@@ -1,15 +1,17 @@
 """
 This module contains all operations to be performed on the Chronicle logging app
 """
+import logging
 from datetime import datetime, date, timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from zoneinfo import ZoneInfo
 from src.db.models import Logs
-from src.db.db_session import DatabaseSession
 
-# Database session
-db = DatabaseSession()
+# Logger setup
+logger = logging.getLogger("chronicle")
+
+# Indian Standard Time
 IST = ZoneInfo("Asia/Kolkata")
 
 
@@ -17,9 +19,13 @@ def add_log(session: Session, log_entry: str, use_llm: bool = True) -> None:
     """
     Function to add a log entry to the Chronicle app database
     """
-    new_log = Logs(entry=log_entry)
-    session.add(new_log)
-    session.commit()
+    try:
+        new_log = Logs(entry=log_entry)
+        session.add(new_log)
+        session.commit()
+        logger.info(f"Log entry added to database: {log_entry}")
+    except Exception as e:
+        logger.error(f"Log entry insertion failed: {e}")
 
 
 def get_logs(session: Session, single_date: date | None = None, from_date: date | None = None, to_date: date | None = None) -> list[Logs]:
