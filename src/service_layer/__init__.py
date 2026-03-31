@@ -1,1 +1,1 @@
-from .services import add_log
+from .services import add_log, get_logs

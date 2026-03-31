@@ -35,21 +35,23 @@ def get_logs(session: Session, single_date: date | None = None, from_date: date 
         2. Date range
         Default behavior: returns all logs from last seven days
     """
-    # Case 1: Execute for single date
-    if single_date is not None:
-        stmt = select(Logs).where(Logs.date_of_creation == single_date)
-    # Case 2: Execute for time period
-    elif from_date is not None and to_date is not None:
-        stmt = select(Logs).where(Logs.date_of_creation >= from_date).where(Logs.date_of_creation <= to_date)
-    # Case 3: Default behavior
-    else:
-        to_date = date.today()
-        from_date = to_date - timedelta(days=7)
-        stmt = select(Logs).where(Logs.date_of_creation >= from_date).where(Logs.date_of_creation <= to_date)
-
-    result = session.execute(stmt).scalars().all()
-    return list(result)
-
+    try:
+        # Case 1: Execute for single date
+        if single_date is not None:
+            stmt = select(Logs).where(Logs.date_of_creation == single_date)
+        # Case 2: Execute for time period
+        elif from_date is not None and to_date is not None:
+            stmt = select(Logs).where(Logs.date_of_creation >= from_date).where(Logs.date_of_creation <= to_date)
+        # Case 3: Default behavior
+        else:
+            to_date = date.today()
+            from_date = to_date - timedelta(days=7)
+            stmt = select(Logs).where(Logs.date_of_creation >= from_date).where(Logs.date_of_creation <= to_date)
+        result = session.execute(stmt).scalars().all()
+        return list(result)
+    except Exception as e:
+        logger.error(f"Logs filtering failed: {e}")
+        return []
 
 def update_log(session: Session, log_id: int, updated_log_entry: str, use_llm: bool = True) -> bool:
     """
