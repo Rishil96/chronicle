@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
@@ -23,7 +24,12 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/")
 def home(request: Request):
     greeting = greet_user()
-    return templates.TemplateResponse(request,"home.html", {"request": request, "greeting": greeting})
+    today_date = date.today().strftime("%A, %d %B %Y")
+    return templates.TemplateResponse(
+        request=request,
+        name="home.html",
+        context={"request": request, "greeting": greeting, "today_date": today_date}
+    )
 
 
 @app.get("/history")
