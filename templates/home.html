@@ -8,5 +8,11 @@ Home Page
     <div class="max-w-4xl mx-auto px-6 py-8">
         <h1 class="text-3xl font-bold text-emerald-600 mb-2">{{ greeting }}</h1>
         <p class="text-lg text-emerald-600 mb-6">{{ today_date }}</p>
+        <div class="flex items-center gap-4 mb-8">
+            <label for="log-entry" class="text-emerald-700 text-xl font-medium whitespace-nowrap">Log Entry</label>
+            <input type="text" id="log-entry" class="flex-1 border border-emerald-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <button class="bg-emerald-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer">Add Log</button>
+
+        </div>
     </div>
 {% endblock %}
