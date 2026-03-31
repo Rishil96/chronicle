@@ -28,11 +28,15 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/")
 def home(request: Request):
     greeting = greet_user()
-    today_date = date.today().strftime("%A, %d %B %Y")
+    today_date = date.today()
+    formatted_date = today_date.strftime("%A, %d %B %Y")
+    with db.get_session() as session:
+        today_log_list = get_logs(session=session, single_date=today_date)
+        today_log_list = [log.to_dict() for log in today_log_list]
     return templates.TemplateResponse(
         request=request,
         name="home.html",
-        context={"request": request, "greeting": greeting, "today_date": today_date}
+        context={"request": request, "greeting": greeting, "today_date": formatted_date, "logs": today_log_list}
     )
 
 

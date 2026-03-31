@@ -13,6 +13,8 @@ Home Page
             <input type="text" id="log-entry" name="log_entry" class="flex-1 border border-emerald-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
             <button class="bg-emerald-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer">Add Log</button>
         </form>
-        <div id="logs-list"></div>
+        <div id="logs-list">
+            {% include "_logs_list.html" %}
+        </div>
     </div>
 {% endblock %}
