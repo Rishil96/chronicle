@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from src.db import DatabaseSession
 from src.logger import setup_logger
-from src.service_layer import add_log
+from src.service_layer import add_log, get_logs
 from src.utils import greet_user
 
 # Load environment variables
@@ -47,9 +47,18 @@ def filter_logs(request: Request):
 
 
 @app.post("/logs")
-def add_logs(log_entry: str = Form(...)):
+def add_logs(request: Request, log_entry: str = Form(...)):
     """
     Route to add a log entry via HTMX from Home route
     """
     with db.get_session() as session:
         add_log(session=session, log_entry=log_entry)
+        today_date = date.today()
+        today_log_list = get_logs(session=session, single_date=today_date)
+        today_log_list = [log.to_dict() for log in today_log_list]
+        print(today_log_list)
+    return templates.TemplateResponse(
+        request=request,
+        name="_logs_list.html",
+        context={"logs": today_log_list}
+    )
