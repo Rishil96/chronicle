@@ -1,6 +1,5 @@
 import os
 from contextlib import contextmanager
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from src.db.models import Base
@@ -12,7 +11,6 @@ class DatabaseSession:
     DATABASE_URI = "chronicle.db"
 
     def __init__(self):
-        load_dotenv()
         directory_path = os.getenv("SQLITE_DATABASE_URL")
         database_url = f"{self.SQLITE_PREFIX}{directory_path}{self.DATABASE_URI}"
         self.engine = create_engine(database_url, connect_args={"check_same_thread": False})
