@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from src.logger import setup_logger
+from src.utils import greet_user
 
 # Load environment variables
 load_dotenv()
@@ -21,7 +22,8 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
 def home(request: Request):
-    return templates.TemplateResponse(request,"home.html", {"request": request})
+    greeting = greet_user()
+    return templates.TemplateResponse(request,"home.html", {"request": request, "greeting": greeting})
 
 
 @app.get("/history")
