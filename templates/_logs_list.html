@@ -1,16 +1,20 @@
-<ul class="space-y-3">
-    {% for log in logs %}
-        <li  class="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm border border-emerald-100">
-            <span class="text-sm text-emerald-500 whitespace-nowrap">
-                {{ log.time_of_creation }}
-            </span>
-            <span class="flex-1 text-gray-700">
-               {{ log.entry }}
-            </span>
-            <div class="flex gap-2">
-                <button class="bg-emerald-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-emerald-600 cursor-pointer"><i class="fas fa-pencil"></i></button>
-                <button class="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-red-600 cursor-pointer"><i class="fas fa-trash"></i></button>
-            </div>
-        </li>
-    {% endfor %}
-</ul>
+{% if logs %}
+    <ul class="space-y-3">
+        {% for log in logs %}
+            <li  class="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm border border-emerald-100">
+                <span class="text-sm text-emerald-500 whitespace-nowrap">
+                    {{ log.time_of_creation }}
+                </span>
+                <span class="flex-1 text-gray-700">
+                   {{ log.entry }}
+                </span>
+                <div class="flex gap-2">
+                    <button class="bg-emerald-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-emerald-600 cursor-pointer"><i class="fas fa-pencil"></i></button>
+                    <button class="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-red-600 cursor-pointer"><i class="fas fa-trash"></i></button>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p class="text-emerald-600 italic text-center mt-8 text-lg">No logs yet today, start your day's chronicle here...</p>
+{% endif %}
