@@ -26,7 +26,7 @@ class Logs(Base):
             "id": self.id,
             "entry": self.entry,
             "date_of_creation": self.date_of_creation,
-            "time_of_creation": self.time_of_creation.strftime("%H:%M:%S"),
+            "time_of_creation": self.time_of_creation.strftime("%I:%M %p"),
             "created_at": self.created_at,
             "updated_at": self.updated_at
         }
