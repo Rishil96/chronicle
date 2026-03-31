@@ -10,7 +10,7 @@ Home Page
         <p class="text-lg text-emerald-600 mb-6">{{ today_date }}</p>
         <form hx-post="/logs" hx-target="#logs-list" hx-swap="innerHTML" class="flex items-center gap-4 mb-8">
             <label for="log-entry" class="text-emerald-700 text-xl font-medium whitespace-nowrap">Log Entry</label>
-            <input type="text" id="log-entry" name="entry" class="flex-1 border border-emerald-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <input type="text" id="log-entry" name="log_entry" class="flex-1 border border-emerald-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
             <button class="bg-emerald-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer">Add Log</button>
         </form>
         <div id="logs-list"></div>
