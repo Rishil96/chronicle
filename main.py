@@ -56,7 +56,6 @@ def add_logs(request: Request, log_entry: str = Form(...)):
         today_date = date.today()
         today_log_list = get_logs(session=session, single_date=today_date)
         today_log_list = [log.to_dict() for log in today_log_list]
-        print(today_log_list)
     return templates.TemplateResponse(
         request=request,
         name="_logs_list.html",

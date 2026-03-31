@@ -38,7 +38,7 @@ def get_logs(session: Session, single_date: date | None = None, from_date: date 
     try:
         # Case 1: Execute for single date
         if single_date is not None:
-            stmt = select(Logs).where(Logs.date_of_creation == single_date)
+            stmt = select(Logs).where(Logs.date_of_creation == single_date).order_by(Logs.time_of_creation.desc())
         # Case 2: Execute for time period
         elif from_date is not None and to_date is not None:
             stmt = select(Logs).where(Logs.date_of_creation >= from_date).where(Logs.date_of_creation <= to_date)
