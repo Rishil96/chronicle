@@ -70,9 +70,13 @@ def delete_log(session: Session, log_id: int):
     """
     Function to delete a log entry using ID
     """
-    log_to_delete = session.execute(select(Logs).where(Logs.id == log_id)).scalars().one_or_none()
-    if log_to_delete:
-        session.delete(log_to_delete)
-        session.commit()
-        return True
-    return False
+    try:
+        log_to_delete = session.execute(select(Logs).where(Logs.id == log_id)).scalars().one_or_none()
+        if log_to_delete:
+            session.delete(log_to_delete)
+            session.commit()
+            return True
+        return False
+    except Exception as e:
+        logger.error(f"Log deletion failed: {e}")
+        return False
