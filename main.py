@@ -1,7 +1,6 @@
 import logging
 import os
 from datetime import date, timedelta
-from typing import Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request, Form
 from fastapi.staticfiles import StaticFiles
