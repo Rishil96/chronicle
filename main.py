@@ -62,7 +62,8 @@ def history(request: Request):
         if log_date not in history_logs_by_date:
             history_logs_by_date[log_date] = []
         history_logs_by_date[log_date].append(log)
-
+    # Sort history dict by date in descending order
+    history_logs_by_date = dict(sorted(history_logs_by_date.items(), reverse=True))
     return templates.TemplateResponse(
         request=request,
         name="history.html",
