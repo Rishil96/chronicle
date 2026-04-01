@@ -1,6 +1,7 @@
 import logging
 import os
 from datetime import date, timedelta
+from typing import Optional
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request, Form
 from fastapi.staticfiles import StaticFiles
@@ -152,4 +153,23 @@ def cancel_log_update(request: Request, log_id: int):
         request=request,
         name="_log_item.html",
         context={"log": log}
+    )
+
+
+@app.post("/filter")
+def filter_logs(request: Request, single_date: date | None = Form(None), from_date: date | None = Form(None), to_date: date | None = Form(None)):
+    """
+    Route to filter logs via date range and return partial HTML
+    """
+    with db.get_session() as session:
+        if single_date:
+            logs = get_logs(session=session, single_date=single_date)
+        else:
+            logs = get_logs(session=session, from_date=from_date, to_date=to_date)
+        logs = [log.to_dict() for log in logs]
+
+    return templates.TemplateResponse(
+        request=request,
+        name="_filter_results.html",
+        context={"logs": logs}
     )
