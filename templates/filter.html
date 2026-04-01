@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Filter Page
+{% endblock %}
+
+{% block content %}
+    <div class="max-w-4xl mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-emerald-600 mb-2">Filter logs using date(s)</h1>
+        <div class="flex gap-4 mb-6 py-5">
+            <button id="btn-single" class="bg-emerald-500 text-white px-4 py-2 rounded-lg cursor-pointer font-medium">Single Date</button>
+            <button id="btn-range" class="bg-white text-emerald-600 border border-emerald-500 px-4 py-2 rounded-lg cursor-pointer font-medium">Date Range</button>
+        </div>
+        <form id="single-date-form" hx-post="/filter" hx-target="#filter-results" hx-swap="innerHTML">
+            <div class="flex items-center gap-4 mb-6">
+                <label for="single-date" class="text-emerald-700 font-medium">Select Date</label>
+                <input type="date" id="single-date" name="single_date" class="border border-emerald-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <button class="bg-emerald-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer mt-4">Filter</button>
+        </form>
+        <form id="range-date-form" class="hidden" hx-post="/filter" hx-target="#filter-results" hx-swap="innerHTML">
+            <div class="flex items-center gap-4 mb-3">
+                <label for="from-date" class="text-emerald-700 font-medium">Select From Date</label>
+                <input type="date" id="from-date" name="from_date" class="border border-emerald-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div class="flex items-center gap-4 mb-3">
+                <label for="to-date" class="text-emerald-700 font-medium">Select To Date</label>
+                <input type="date" id="to-date" name="to_date" class="border border-emerald-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <button class="bg-emerald-500 text-white px-6 py-2 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer mt-4">Filter Range</button>
+        </form>
+
+        <div id="filter-results"></div>
+
+        <script>
+            singleFormBtn = document.getElementById("btn-single");
+            rangeFormBtn = document.getElementById("btn-range");
+
+            singleForm = document.getElementById("single-date-form");
+            rangeForm = document.getElementById("range-date-form");
+
+            singleFormBtn.addEventListener("click", function() {
+                rangeForm.classList.add("hidden");
+                singleForm.classList.remove("hidden");
+
+                singleFormBtn.style.backgroundColor = "#10b981";
+                singleFormBtn.style.color = "white";
+
+                rangeFormBtn.style.backgroundColor = "white";
+                rangeFormBtn.style.color = "#059669";
+                rangeFormBtn.style.border = "1px solid #10b981";
+
+            });
+
+            rangeFormBtn.addEventListener("click", function() {
+                singleForm.classList.add("hidden");
+                rangeForm.classList.remove("hidden");
+
+                rangeFormBtn.style.backgroundColor = "#10b981";
+                rangeFormBtn.style.color = "white";
+
+                singleFormBtn.style.backgroundColor = "white";
+                singleFormBtn.style.color = "#059669";
+                singleFormBtn.style.border = "1px solid #10b981";
+            });
+
+        </script>
+
+    </div>
+{% endblock %}

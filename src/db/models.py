@@ -20,3 +20,13 @@ class Logs(Base):
     time_of_creation: Mapped[time] = mapped_column(Time, default=lambda: datetime.now(tz=IST).time())
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "entry": self.entry,
+            "date_of_creation": self.date_of_creation,
+            "time_of_creation": self.time_of_creation.strftime("%I:%M %p"),
+            "created_at": self.created_at,
+            "updated_at": self.updated_at
+        }
