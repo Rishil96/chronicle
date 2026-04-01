@@ -1,7 +1,7 @@
 {% if logs %}
     <ul class="space-y-3">
         {% for log in logs %}
-            <li  class="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm border border-emerald-100">
+            <li  class="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm border border-emerald-100" id="log-{{ log.id }}">
                 <span class="text-sm text-emerald-500 whitespace-nowrap">
                     {{ log.time_of_creation }}
                 </span>
@@ -9,7 +9,7 @@
                    {{ log.entry }}
                 </span>
                 <div class="flex gap-2">
-                    <button class="bg-emerald-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-emerald-600 cursor-pointer">
+                    <button class="bg-emerald-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-emerald-600 cursor-pointer" hx-get="/logs/{{ log.id }}/edit" hx-target="#log-{{ log.id }}" hx-swap="outerHTML">
                         <i class="fas fa-pencil"></i>
                     </button>
                     <button class="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-red-600 cursor-pointer" hx-delete="/logs/{{ log.id }}" hx-target="#logs-list" hx-swap="innerHTML" hx-confirm="Are you sure you want to delete this log?">
