@@ -1,1 +1,24 @@
 {% extends "base.html" %}
+
+{% block title %}
+    Filter Page
+{% endblock %}
+
+{% block content %}
+    <div class="max-w-4xl mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-emerald-600 mb-2">Filter logs using date(s)</h1>
+        <div class="flex gap-4 mb-6 py-5">
+            <button id="btn-single" class="bg-emerald-500 text-white px-4 py-2 rounded-lg cursor-pointer font-medium">Single Date</button>
+            <button id="btn-range" class="bg-white text-emerald-600 border border-emerald-500 px-4 py-2 rounded-lg cursor-pointer font-medium">Date Range</button>
+        </div>
+        <div id="single-date-form">
+            <div class="flex items-center gap-4">
+                <label for="single-date" class="text-emerald-700 font-medium">Select Date</label>
+                <input type="date" id="single-date" name="single_date" class="border border-emerald-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+        </div>
+        <div id="range-date-form" class="hidden">
+
+        </div>
+    </div>
+{% endblock %}
