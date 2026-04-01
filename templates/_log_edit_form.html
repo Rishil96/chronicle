@@ -1,0 +1,11 @@
+<li  class="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm border border-emerald-100" id="log-{{ log.id }}">
+    <input type="text" id="log-entry" name="log_entry" class="flex-1 border border-emerald-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500" value="{{ log.entry }}" required>
+    <div class="flex gap-2">
+        <button class="bg-emerald-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-emerald-600 cursor-pointer" hx-put="/logs/{{ log.id }}" hx-target="#logs-list" hx-swap="innerHTML" hx-include="[name='log_entry']">
+            Save
+        </button>
+        <button class="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-red-600 cursor-pointer">
+            Cancel
+        </button>
+    </div>
+</li>
