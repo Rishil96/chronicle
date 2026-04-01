@@ -113,3 +113,17 @@ def update_logs(request: Request, log_id: int, log_entry: str = Form(...)):
         name="_logs_list.html",
         context={"logs": today_log_list}
     )
+
+
+@app.get("/logs/{log_id}/cancel")
+def cancel_log_update(request: Request, log_id: int):
+    """
+    Route to cancel a log entry via log ID and return partial to recreate original log list item
+    """
+    with db.get_session() as session:
+        log = get_log_by_id(session=session, log_id=log_id)
+    return templates.TemplateResponse(
+        request=request,
+        name="_log_item.html",
+        context={"log": log}
+    )
