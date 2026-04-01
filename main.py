@@ -1,5 +1,6 @@
 import logging
-from datetime import date
+import os
+from datetime import date, timedelta
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request, Form
 from fastapi.staticfiles import StaticFiles
@@ -27,6 +28,9 @@ templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
 def home(request: Request):
+    """
+    Home page
+    """
     greeting = greet_user()
     today_date = date.today()
     formatted_date = today_date.strftime("%A, %d %B %Y")
@@ -42,10 +46,27 @@ def home(request: Request):
 
 @app.get("/history")
 def history(request: Request):
+    """
+    History page
+    """
+    history_days = int(os.getenv("HISTORY_DAYS", 30))
+    to_date = date.today()
+    from_date = to_date - timedelta(days=history_days)
+    with db.get_session() as session:
+        history_log_list = get_logs(session=session, from_date=from_date, to_date=to_date)
+        history_log_list = [log.to_dict() for log in history_log_list]
+    # Group logs by date
+    history_logs_by_date = {}
+    for log in history_log_list:
+        log_date = log["date_of_creation"]
+        if log_date not in history_logs_by_date:
+            history_logs_by_date[log_date] = []
+        history_logs_by_date[log_date].append(log)
+
     return templates.TemplateResponse(
         request=request,
         name="history.html",
-        context={}
+        context={"logs_by_date": history_logs_by_date}
     )
 
 
