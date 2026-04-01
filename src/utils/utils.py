@@ -1,5 +1,8 @@
 import os
-from datetime import datetime
+from typing import List
+from datetime import datetime, date
+from sqlalchemy.orm import Session
+from src.service_layer import get_logs
 
 
 # Greeting constants
@@ -22,3 +25,10 @@ def greet_user():
     elif 16 <= curr_time_hour < 21:
         return EVENING.format(user_name=user_name)
     return NIGHT.format(user_name=user_name)
+
+
+def get_today_logs(session: Session) -> List[dict]:
+    today_date = date.today()
+    today_log_list = get_logs(session=session, single_date=today_date)
+    today_log_list = [log.to_dict() for log in today_log_list]
+    return today_log_list
