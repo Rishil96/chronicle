@@ -58,14 +58,17 @@ def update_log(session: Session, log_id: int, updated_log_entry: str, use_llm: b
     """
     Function to update a log entry using ID
     """
-    log_to_update = session.execute(select(Logs).where(Logs.id == log_id)).scalars().one_or_none()
-    if log_to_update:
-        log_to_update.entry = updated_log_entry
-        log_to_update.updated_at = datetime.now(tz=IST)
-        session.commit()
-        return True
-    return False
-
+    try:
+        log_to_update = session.execute(select(Logs).where(Logs.id == log_id)).scalars().one_or_none()
+        if log_to_update:
+            log_to_update.entry = updated_log_entry
+            log_to_update.updated_at = datetime.now(tz=IST)
+            session.commit()
+            return True
+        return False
+    except Exception as e:
+        logging.error(f"Log update failed: {e}")
+        return False
 
 def delete_log(session: Session, log_id: int):
     """
