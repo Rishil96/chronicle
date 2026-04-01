@@ -168,8 +168,18 @@ def filter_logs(request: Request, single_date: date | None = Form(None), from_da
             logs = get_logs(session=session, from_date=from_date, to_date=to_date)
         logs = [log.to_dict() for log in logs]
 
+    # Group logs by date
+    filtered_logs_by_date = {}
+    for log in logs:
+        log_date = log["date_of_creation"]
+        if log_date not in filtered_logs_by_date:
+            filtered_logs_by_date[log_date] = []
+        filtered_logs_by_date[log_date].append(log)
+    # Sort history dict by date in descending order
+    filtered_logs_by_date = dict(sorted(filtered_logs_by_date.items(), reverse=True))
+
     return templates.TemplateResponse(
         request=request,
         name="_filter_results.html",
-        context={"logs": logs}
+        context={"logs": filtered_logs_by_date}
     )
