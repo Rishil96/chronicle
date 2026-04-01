@@ -53,6 +53,7 @@ def get_logs(session: Session, single_date: date | None = None, from_date: date 
         logger.error(f"Logs filtering failed: {e}")
         return []
 
+
 def update_log(session: Session, log_id: int, updated_log_entry: str, use_llm: bool = True) -> bool:
     """
     Function to update a log entry using ID
@@ -80,3 +81,19 @@ def delete_log(session: Session, log_id: int):
     except Exception as e:
         logger.error(f"Log deletion failed: {e}")
         return False
+
+
+def get_log_by_id(session: Session, log_id: int) -> dict | None:
+    """
+    Function to get a log entry by ID
+    """
+    try:
+        stmt = select(Logs).where(Logs.id == log_id)
+        result = session.execute(stmt).scalars().one_or_none()
+        if result:
+            return result.to_dict()
+        logger.error(f"Log entry not found: {log_id}")
+        return None
+    except Exception as e:
+        logger.error(f"Error while fetching log entry via ID: {e}")
+        return None
