@@ -36,18 +36,26 @@ def home(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="home.html",
-        context={"request": request, "greeting": greeting, "today_date": formatted_date, "logs": today_log_list}
+        context={"greeting": greeting, "today_date": formatted_date, "logs": today_log_list}
     )
 
 
 @app.get("/history")
 def history(request: Request):
-    return templates.TemplateResponse(request,"history.html", {"request": request})
+    return templates.TemplateResponse(
+        request=request,
+        name="history.html",
+        context={}
+    )
 
 
 @app.get("/filter")
 def filter_logs(request: Request):
-    return templates.TemplateResponse(request,"filter.html", {"request": request})
+    return templates.TemplateResponse(
+        request=request,
+        name="filter.html",
+        context={}
+    )
 
 
 @app.post("/logs")
