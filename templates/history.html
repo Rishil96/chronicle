@@ -9,7 +9,7 @@ History Page
         <h1 class="text-3xl font-bold text-emerald-600 mb-2">History Page</h1>
         {% if logs_by_date %}
             {% for date, logs in logs_by_date.items() %}
-                <h2 class="text-lg text-emerald-600 mb-6 py-3">{{ date }}</h2>
+                <h2 class="text-lg text-emerald-600 mb-6 py-3">{{ date.strftime('%B %d, %Y') }}</h2>
                 <ul class="space-y-3 mb-4">
                     {% for log in logs %}
                         <li  class="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm border border-emerald-100" id="log-{{ log.id }}">
