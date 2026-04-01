@@ -1,0 +1,22 @@
+{% if logs_by_date %}
+    {% for log_date, logs in logs_by_date.items() %}
+        <h2 class="text-lg text-emerald-600 mb-6 py-3">{{ log_date.strftime('%B %d, %Y') }}</h2>
+        <ul class="space-y-3 mb-4">
+            {% for log in logs %}
+                <li  class="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm border border-emerald-100" id="log-{{ log.id }}">
+                    <span class="text-sm text-emerald-500 whitespace-nowrap">
+                        {{ log.time_of_creation }}
+                    </span>
+                    <span class="flex-1 text-gray-700">
+                       {{ log.entry }}
+                    </span>
+                    {% if log.updated_at %}
+                        <span class="text-sm text-amber-500 italic">edited</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+{% else %}
+    <p class="text-emerald-600 italic text-center mt-8 text-lg">No logs found via the current applied filter, try another filter!</p>
+{% endif %}

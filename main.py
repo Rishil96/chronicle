@@ -181,5 +181,5 @@ def filter_logs(request: Request, single_date: date | None = Form(None), from_da
     return templates.TemplateResponse(
         request=request,
         name="_filter_results.html",
-        context={"logs": filtered_logs_by_date}
+        context={"logs_by_date": filtered_logs_by_date}
     )
