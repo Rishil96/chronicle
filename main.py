@@ -6,7 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from src.db import DatabaseSession
 from src.logger import setup_logger
-from src.service_layer import add_log, get_logs
+from src.service_layer import add_log, get_logs, delete_log
 from src.utils import greet_user
 
 # Load environment variables
@@ -57,6 +57,23 @@ def add_logs(request: Request, log_entry: str = Form(...)):
     """
     with db.get_session() as session:
         add_log(session=session, log_entry=log_entry)
+        today_date = date.today()
+        today_log_list = get_logs(session=session, single_date=today_date)
+        today_log_list = [log.to_dict() for log in today_log_list]
+    return templates.TemplateResponse(
+        request=request,
+        name="_logs_list.html",
+        context={"logs": today_log_list}
+    )
+
+
+@app.delete("/logs/{log_id}")
+def delete_logs(request: Request, log_id: int):
+    """
+    Route to delete a log entry via log ID
+    """
+    with db.get_session() as session:
+        delete_log(session=session, log_id=log_id)
         today_date = date.today()
         today_log_list = get_logs(session=session, single_date=today_date)
         today_log_list = [log.to_dict() for log in today_log_list]
