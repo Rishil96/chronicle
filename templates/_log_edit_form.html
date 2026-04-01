@@ -4,7 +4,7 @@
         <button class="bg-emerald-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-emerald-600 cursor-pointer" hx-put="/logs/{{ log.id }}" hx-target="#logs-list" hx-swap="innerHTML" hx-include="[name='log_entry']">
             Save
         </button>
-        <button class="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-red-600 cursor-pointer">
+        <button class="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-medium hover:bg-red-600 cursor-pointer" hx-get="/logs/{{ log.id }}/cancel" hx-target="#log-{{ log.id }}" hx-swap="outerHTML">
             Cancel
         </button>
     </div>

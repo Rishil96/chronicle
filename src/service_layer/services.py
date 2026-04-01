@@ -70,6 +70,7 @@ def update_log(session: Session, log_id: int, updated_log_entry: str, use_llm: b
         logging.error(f"Log update failed: {e}")
         return False
 
+
 def delete_log(session: Session, log_id: int):
     """
     Function to delete a log entry using ID
