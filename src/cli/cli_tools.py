@@ -1,6 +1,6 @@
 import typer
 import os
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from src.db import DatabaseSession
 from src.service_layer import add_log, get_logs, update_log, delete_log
 from src.utils import get_today_logs, print_logs, sort_logs_by_date, print_logs_by_date
@@ -16,7 +16,7 @@ db_session = DatabaseSession()
 @app.command()
 def add(log_entry: str):
     """
-    CLI command for adding logs
+    Add a new log entry to Chronicle
     """
     with db_session.get_session() as session:
         add_log(session=session, log_entry=log_entry)
@@ -27,7 +27,7 @@ def add(log_entry: str):
 @app.command()
 def today():
     """
-    CLI command to list today's logs
+    List all log entries for today
     """
     with db_session.get_session() as session:
         today_logs = get_today_logs(session=session)
@@ -42,7 +42,7 @@ def today():
 @app.command()
 def history():
     """
-    CLI command to list log history
+    List log entries from the past N days
     """
     history_days = int(os.getenv("HISTORY_DAYS", 30))
     to_date = date.today()
@@ -57,7 +57,7 @@ def history():
 @app.command()
 def update(log_id: int, updated_log: str):
     """
-    CLI command to update a log entry using ID
+    Update an existing log entry by ID
     """
     with db_session.get_session() as session:
         res = update_log(session=session, log_id=log_id, updated_log_entry=updated_log)
@@ -70,7 +70,7 @@ def update(log_id: int, updated_log: str):
 @app.command()
 def delete(log_id: int):
     """
-    CLI command to delete a log entry using ID
+    Delete a log entry by ID
     """
     typer.confirm(f"Are you sure you want to delete this log with ID {log_id}?", abort=True)
     with db_session.get_session() as session:
@@ -82,20 +82,26 @@ def delete(log_id: int):
 
 
 @app.command(name="filter")
-def filter_logs(single_date: date | None = typer.Option(None, "--date"),
-           from_date: date | None = typer.Option(None, "--from-date"),
-           to_date: date | None = typer.Option(None, "--to-date")):
+def filter_logs(single_date: str | None = typer.Option(None, "--date"),
+           from_date: str | None = typer.Option(None, "--from-date"),
+           to_date: str | None = typer.Option(None, "--to-date")):
+    """
+    Filter log entries by a specific date or date range
+    """
     # Case 1: Single date present
     if single_date:
+        parsed_single_date = datetime.strptime(single_date, "%Y-%m-%d").date()
         with db_session.get_session() as session:
-            logs_list = get_logs(session=session, single_date=single_date)
+            logs_list = get_logs(session=session, single_date=parsed_single_date)
             logs_list = [log.to_dict() for log in logs_list]
-        print_logs(log_date=single_date, logs_list=logs_list)
+        print_logs(log_date=parsed_single_date, logs_list=logs_list)
         return
     # Case 2: Date range
     if from_date and to_date:
+        parsed_from_date = datetime.strptime(from_date, "%Y-%m-%d").date()
+        parsed_to_date = datetime.strptime(to_date, "%Y-%m-%d").date()
         with db_session.get_session() as session:
-            logs_list = get_logs(session=session, from_date=from_date, to_date=to_date)
+            logs_list = get_logs(session=session, from_date=parsed_from_date, to_date=parsed_to_date)
             logs_list = [log.to_dict() for log in logs_list]
         logs_by_date = sort_logs_by_date(logs_list=logs_list)
         print_logs_by_date(logs_by_date=logs_by_date)
