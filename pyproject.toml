@@ -9,5 +9,6 @@ dependencies = [
     "openai>=2.30.0",
     "python-dotenv>=1.2.2",
     "sqlalchemy>=2.0.48",
+    "typer>=0.24.1",
     "tzdata>=2025.3",
 ]
