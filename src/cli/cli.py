@@ -90,7 +90,7 @@ def filter_logs(single_date: date | None = typer.Option(None, "--date"),
         with db_session.get_session() as session:
             logs_list = get_logs(session=session, single_date=single_date)
             logs_list = [log.to_dict() for log in logs_list]
-            print_logs(log_date=single_date, logs_list=logs_list)
+        print_logs(log_date=single_date, logs_list=logs_list)
         return
     # Case 2: Date range
     if from_date and to_date:
