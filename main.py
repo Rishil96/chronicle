@@ -35,8 +35,7 @@ def home_page(request: Request):
     today_date = date.today()
     formatted_date = today_date.strftime("%A, %d %B %Y")
     with db.get_session() as session:
-        today_log_list = get_logs(session=session, single_date=today_date)
-        today_log_list = [log.to_dict() for log in today_log_list]
+        today_log_list = get_today_logs(session=session)
     return templates.TemplateResponse(
         request=request,
         name="home.html",
@@ -80,9 +79,7 @@ def add_logs(request: Request, log_entry: str = Form(...)):
     """
     with db.get_session() as session:
         add_log(session=session, log_entry=log_entry)
-        today_date = date.today()
-        today_log_list = get_logs(session=session, single_date=today_date)
-        today_log_list = [log.to_dict() for log in today_log_list]
+        today_log_list = get_today_logs(session=session)
     return templates.TemplateResponse(
         request=request,
         name="_logs_list.html",
