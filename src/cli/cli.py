@@ -3,7 +3,7 @@ import os
 from datetime import date, timedelta
 from src.db import DatabaseSession
 from src.service_layer import add_log, get_logs, update_log, delete_log
-from src.utils import get_today_logs, print_logs, sort_logs_by_date
+from src.utils import get_today_logs, print_logs, sort_logs_by_date, print_logs_by_date
 
 # Typer CLI application
 app = typer.Typer()
@@ -51,10 +51,7 @@ def history():
         history_log_list = get_logs(session=session, from_date=from_date, to_date=to_date)
         history_log_list = [log.to_dict() for log in history_log_list]
     history_logs_by_date = sort_logs_by_date(logs_list=history_log_list)
-
-    for log_date, log_list in history_logs_by_date.items():
-        print_logs(log_date=log_date, logs_list=log_list)
-        print("\n")
+    print_logs_by_date(logs_by_date=history_logs_by_date)
 
 
 @app.command()
@@ -69,6 +66,7 @@ def update(log_id: int, updated_log: str):
     else:
         print("Log update failed")
 
+
 @app.command()
 def delete(log_id: int):
     """
@@ -81,3 +79,27 @@ def delete(log_id: int):
         print("Log deleted")
     else:
         print("Log deletion failed")
+
+
+@app.command(name="filter")
+def filter_logs(single_date: date | None = typer.Option(None, "--date"),
+           from_date: date | None = typer.Option(None, "--from-date"),
+           to_date: date | None = typer.Option(None, "--to-date")):
+    # Case 1: Single date present
+    if single_date:
+        with db_session.get_session() as session:
+            logs_list = get_logs(session=session, single_date=single_date)
+            logs_list = [log.to_dict() for log in logs_list]
+            print_logs(log_date=single_date, logs_list=logs_list)
+        return
+    # Case 2: Date range
+    if from_date and to_date:
+        with db_session.get_session() as session:
+            logs_list = get_logs(session=session, from_date=from_date, to_date=to_date)
+            logs_list = [log.to_dict() for log in logs_list]
+        logs_by_date = sort_logs_by_date(logs_list=logs_list)
+        print_logs_by_date(logs_by_date=logs_by_date)
+        return
+    # Case 3: Missing flags
+    typer.echo("Please provide either --date or both --from-date and --to-date")
+    raise typer.Exit(code=1)
