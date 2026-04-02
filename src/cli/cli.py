@@ -2,7 +2,7 @@ import typer
 import os
 from datetime import date, timedelta
 from src.db import DatabaseSession
-from src.service_layer import add_log, get_logs
+from src.service_layer import add_log, get_logs, update_log, delete_log
 from src.utils import get_today_logs, print_logs, sort_logs_by_date
 
 # Typer CLI application
@@ -55,3 +55,29 @@ def history():
     for log_date, log_list in history_logs_by_date.items():
         print_logs(log_date=log_date, logs_list=log_list)
         print("\n")
+
+
+@app.command()
+def update(log_id: int, updated_log: str):
+    """
+    CLI command to update a log entry using ID
+    """
+    with db_session.get_session() as session:
+        res = update_log(session=session, log_id=log_id, updated_log_entry=updated_log)
+    if res:
+        print("Log updated")
+    else:
+        print("Log update failed")
+
+@app.command()
+def delete(log_id: int):
+    """
+    CLI command to delete a log entry using ID
+    """
+    typer.confirm(f"Are you sure you want to delete this log with ID {log_id}?", abort=True)
+    with db_session.get_session() as session:
+        res = delete_log(session=session, log_id=log_id)
+    if res:
+        print("Log deleted")
+    else:
+        print("Log deletion failed")
