@@ -8,7 +8,7 @@ from fastapi.templating import Jinja2Templates
 from src.db import DatabaseSession
 from src.logger import setup_logger
 from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log
-from src.utils import greet_user, get_today_logs
+from src.utils import greet_user, get_today_logs, sort_logs_by_date
 
 # Load environment variables
 load_dotenv()
@@ -27,7 +27,7 @@ templates = Jinja2Templates(directory="templates")
 
 
 @app.get("/")
-def home(request: Request):
+def home_page(request: Request):
     """
     Home page
     """
@@ -35,8 +35,7 @@ def home(request: Request):
     today_date = date.today()
     formatted_date = today_date.strftime("%A, %d %B %Y")
     with db.get_session() as session:
-        today_log_list = get_logs(session=session, single_date=today_date)
-        today_log_list = [log.to_dict() for log in today_log_list]
+        today_log_list = get_today_logs(session=session)
     return templates.TemplateResponse(
         request=request,
         name="home.html",
@@ -45,7 +44,7 @@ def home(request: Request):
 
 
 @app.get("/history")
-def history(request: Request):
+def history_page(request: Request):
     """
     History page
     """
@@ -56,14 +55,7 @@ def history(request: Request):
         history_log_list = get_logs(session=session, from_date=from_date, to_date=to_date)
         history_log_list = [log.to_dict() for log in history_log_list]
     # Group logs by date
-    history_logs_by_date = {}
-    for log in history_log_list:
-        log_date = log["date_of_creation"]
-        if log_date not in history_logs_by_date:
-            history_logs_by_date[log_date] = []
-        history_logs_by_date[log_date].append(log)
-    # Sort history dict by date in descending order
-    history_logs_by_date = dict(sorted(history_logs_by_date.items(), reverse=True))
+    history_logs_by_date = sort_logs_by_date(logs_list=history_log_list)
     return templates.TemplateResponse(
         request=request,
         name="history.html",
@@ -72,7 +64,7 @@ def history(request: Request):
 
 
 @app.get("/filter")
-def filter_logs(request: Request):
+def filter_page(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="filter.html",
@@ -87,9 +79,7 @@ def add_logs(request: Request, log_entry: str = Form(...)):
     """
     with db.get_session() as session:
         add_log(session=session, log_entry=log_entry)
-        today_date = date.today()
-        today_log_list = get_logs(session=session, single_date=today_date)
-        today_log_list = [log.to_dict() for log in today_log_list]
+        today_log_list = get_today_logs(session=session)
     return templates.TemplateResponse(
         request=request,
         name="_logs_list.html",
@@ -168,14 +158,7 @@ def filter_logs(request: Request, single_date: date | None = Form(None), from_da
         logs = [log.to_dict() for log in logs]
 
     # Group logs by date
-    filtered_logs_by_date = {}
-    for log in logs:
-        log_date = log["date_of_creation"]
-        if log_date not in filtered_logs_by_date:
-            filtered_logs_by_date[log_date] = []
-        filtered_logs_by_date[log_date].append(log)
-    # Sort history dict by date in descending order
-    filtered_logs_by_date = dict(sorted(filtered_logs_by_date.items(), reverse=True))
+    filtered_logs_by_date = sort_logs_by_date(logs_list=logs)
 
     return templates.TemplateResponse(
         request=request,

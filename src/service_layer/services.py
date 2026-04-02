@@ -2,23 +2,32 @@
 This module contains all operations to be performed on the Chronicle logging app
 """
 import logging
+import os
 from datetime import datetime, date, timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from zoneinfo import ZoneInfo
 from src.db.models import Logs
+from src.llm import LLM
 
 # Logger setup
 logger = logging.getLogger("chronicle")
-
 # Indian Standard Time
 IST = ZoneInfo("Asia/Kolkata")
+# Use LLM
+USE_LLM = True if os.getenv("USE_LLM", "False") == "True" else False
+llm_obj = LLM() if USE_LLM else None
 
 
-def add_log(session: Session, log_entry: str, use_llm: bool = True) -> None:
+def add_log(session: Session, log_entry: str) -> None:
     """
     Function to add a log entry to the Chronicle app database
     """
+    # Step 1: Check for LLM based processing
+    if USE_LLM:
+        assert llm_obj is not None
+        log_entry = llm_obj.generate_response(log_message=log_entry)
+    # Step 2: Add log to database
     try:
         new_log = Logs(entry=log_entry)
         session.add(new_log)
@@ -54,18 +63,24 @@ def get_logs(session: Session, single_date: date | None = None, from_date: date 
         return []
 
 
-def update_log(session: Session, log_id: int, updated_log_entry: str, use_llm: bool = True) -> bool:
+def update_log(session: Session, log_id: int, updated_log_entry: str) -> bool:
     """
     Function to update a log entry using ID
     """
     try:
+        # Step 1: Check if log ID is valid
         log_to_update = session.execute(select(Logs).where(Logs.id == log_id)).scalars().one_or_none()
-        if log_to_update:
-            log_to_update.entry = updated_log_entry
-            log_to_update.updated_at = datetime.now(tz=IST)
-            session.commit()
-            return True
-        return False
+        if not log_to_update:
+            return False
+        # Step 2: Check for LLM based processing
+        if USE_LLM:
+            assert llm_obj is not None
+            updated_log_entry = llm_obj.generate_response(log_message=updated_log_entry)
+        # Step 3: Update log entry in database
+        log_to_update.entry = updated_log_entry
+        log_to_update.updated_at = datetime.now(tz=IST)
+        session.commit()
+        return True
     except Exception as e:
         logging.error(f"Log update failed: {e}")
         return False
