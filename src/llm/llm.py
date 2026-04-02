@@ -1,6 +1,10 @@
+import logging
 import os
 from openai import OpenAI
 from src.llm.prompts import system_prompt
+
+
+logger = logging.getLogger("chronicle")
 
 
 class LLM:
@@ -18,9 +22,14 @@ class LLM:
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": log_message},
         ]
-        response = self.llm_instance.chat.completions.create(
-            messages=messages,  # type: ignore
-            model=self.model_name,
-            temperature=0
-        )
-        return response.choices[0].message.content
+        logger.info("Sending log message to LLM for processing")
+        try:
+            response = self.llm_instance.chat.completions.create(
+                messages=messages,  # type: ignore
+                model=self.model_name,
+                temperature=0
+            )
+            return response.choices[0].message.content
+        except Exception as e:
+            logger.error(f"LLM Processing failed: {e}")
+            return log_message
