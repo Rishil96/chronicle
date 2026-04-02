@@ -27,7 +27,7 @@ templates = Jinja2Templates(directory="templates")
 
 
 @app.get("/")
-def home(request: Request):
+def home_page(request: Request):
     """
     Home page
     """
@@ -45,7 +45,7 @@ def home(request: Request):
 
 
 @app.get("/history")
-def history(request: Request):
+def history_page(request: Request):
     """
     History page
     """
@@ -72,7 +72,7 @@ def history(request: Request):
 
 
 @app.get("/filter")
-def filter_logs(request: Request):
+def filter_page(request: Request):
     return templates.TemplateResponse(
         request=request,
         name="filter.html",
