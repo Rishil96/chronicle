@@ -53,7 +53,7 @@ def print_logs(log_date: date, logs_list: List[dict]):
     """
     Pretty prints logs for a single date
     """
-    print(f"Date: {log_date}")
+    print(f"\nDate: {log_date}")
     for log in logs_list:
         print(f"{log.get('id')} | {log.get('time_of_creation')} | {log.get('entry')}")
 
@@ -64,4 +64,3 @@ def print_logs_by_date(logs_by_date: dict):
     """
     for log_date, log_list in logs_by_date.items():
         print_logs(log_date=log_date, logs_list=log_list)
-        print("\n")
