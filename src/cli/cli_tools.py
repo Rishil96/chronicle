@@ -1,9 +1,13 @@
 import typer
 import os
 from datetime import date, timedelta, datetime
+from dotenv import load_dotenv
 from src.db import DatabaseSession
 from src.service_layer import add_log, get_logs, update_log, delete_log
 from src.utils import get_today_logs, print_logs, sort_logs_by_date, print_logs_by_date
+
+# Load environment variables
+load_dotenv()
 
 # Typer CLI application
 app = typer.Typer()
