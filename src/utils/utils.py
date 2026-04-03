@@ -47,3 +47,20 @@ def sort_logs_by_date(logs_list: List[dict]) -> Dict[Any, Any]:
     # Sort history dict by date in descending order
     logs_by_date = dict(sorted(logs_by_date.items(), reverse=True))
     return logs_by_date
+
+
+def print_logs(log_date: date, logs_list: List[dict]):
+    """
+    Pretty prints logs for a single date
+    """
+    print(f"\nDate: {log_date}")
+    for log in logs_list:
+        print(f"{log.get('id')} | {log.get('time_of_creation')} | {log.get('entry')}")
+
+
+def print_logs_by_date(logs_by_date: dict):
+    """
+    Pretty prints logs for multiple dates
+    """
+    for log_date, log_list in logs_by_date.items():
+        print_logs(log_date=log_date, logs_list=log_list)
