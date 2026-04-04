@@ -6,14 +6,13 @@ from src.db import DatabaseSession
 from src.service_layer import add_log, get_logs, update_log, delete_log
 from src.utils import get_today_logs, print_logs, sort_logs_by_date, print_logs_by_date
 
-# Load environment variables
-load_dotenv()
-
 # Typer CLI application
 app = typer.Typer()
 
 # Database session
-db_session = DatabaseSession()
+def get_db():
+    load_dotenv(os.getenv("CHRONICLE_CONFIG", ".env"))
+    return DatabaseSession()
 
 
 # Add a new log
@@ -22,7 +21,7 @@ def add(log_entry: str):
     """
     Add a new log entry to Chronicle
     """
-    with db_session.get_session() as session:
+    with get_db().get_session() as session:
         add_log(session=session, log_entry=log_entry)
     print("New Log added")
 
@@ -33,7 +32,7 @@ def today():
     """
     List all log entries for today
     """
-    with db_session.get_session() as session:
+    with get_db().get_session() as session:
         today_logs = get_today_logs(session=session)
     if not today_logs:
         print("No logs found")
@@ -51,7 +50,7 @@ def history():
     history_days = int(os.getenv("HISTORY_DAYS", 30))
     to_date = date.today()
     from_date = to_date - timedelta(days=history_days)
-    with db_session.get_session() as session:
+    with get_db().get_session() as session:
         history_log_list = get_logs(session=session, from_date=from_date, to_date=to_date)
         history_log_list = [log.to_dict() for log in history_log_list]
     history_logs_by_date = sort_logs_by_date(logs_list=history_log_list)
@@ -63,7 +62,7 @@ def update(log_id: int, updated_log: str):
     """
     Update an existing log entry by ID
     """
-    with db_session.get_session() as session:
+    with get_db().get_session() as session:
         res = update_log(session=session, log_id=log_id, updated_log_entry=updated_log)
     if res:
         print("Log updated")
@@ -77,7 +76,7 @@ def delete(log_id: int):
     Delete a log entry by ID
     """
     typer.confirm(f"Are you sure you want to delete this log with ID {log_id}?", abort=True)
-    with db_session.get_session() as session:
+    with get_db().get_session() as session:
         res = delete_log(session=session, log_id=log_id)
     if res:
         print("Log deleted")
@@ -95,7 +94,7 @@ def filter_logs(single_date: str | None = typer.Option(None, "--date"),
     # Case 1: Single date present
     if single_date:
         parsed_single_date = datetime.strptime(single_date, "%Y-%m-%d").date()
-        with db_session.get_session() as session:
+        with get_db().get_session() as session:
             logs_list = get_logs(session=session, single_date=parsed_single_date)
             logs_list = [log.to_dict() for log in logs_list]
         print_logs(log_date=parsed_single_date, logs_list=logs_list)
@@ -104,7 +103,7 @@ def filter_logs(single_date: str | None = typer.Option(None, "--date"),
     if from_date and to_date:
         parsed_from_date = datetime.strptime(from_date, "%Y-%m-%d").date()
         parsed_to_date = datetime.strptime(to_date, "%Y-%m-%d").date()
-        with db_session.get_session() as session:
+        with get_db().get_session() as session:
             logs_list = get_logs(session=session, from_date=parsed_from_date, to_date=parsed_to_date)
             logs_list = [log.to_dict() for log in logs_list]
         logs_by_date = sort_logs_by_date(logs_list=logs_list)
