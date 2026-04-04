@@ -11,7 +11,7 @@ from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, upda
 from src.utils import greet_user, get_today_logs, sort_logs_by_date
 
 # Load environment variables
-load_dotenv()
+load_dotenv(os.getenv("CHRONICLE_CONFIG", ".env"))
 
 # Logger Setup
 setup_logger()
