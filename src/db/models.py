@@ -1,6 +1,6 @@
 from datetime import datetime, date, time
 from zoneinfo import ZoneInfo
-from sqlalchemy import String, Date, Time, DateTime, Boolean, Text, ForeignKey
+from sqlalchemy import String, Date, Time, DateTime, Boolean, Text, ForeignKey, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -40,7 +40,7 @@ class Users(Base):
     email: Mapped[str] = mapped_column(String(100), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255))
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class WorkCategories(Base):
