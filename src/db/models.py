@@ -41,3 +41,11 @@ class Users(Base):
     password_hash: Mapped[str] = mapped_column(String(255))
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
+
+
+class WorkCategories(Base):
+    __tablename__ = "work_categories"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    category_name: Mapped[str] = mapped_column(String(100), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
+
