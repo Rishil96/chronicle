@@ -1,6 +1,6 @@
 from datetime import datetime, date, time
 from zoneinfo import ZoneInfo
-from sqlalchemy import String, Date, Time, DateTime, Boolean
+from sqlalchemy import String, Date, Time, DateTime, Boolean, Text, ForeignKey
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -47,5 +47,15 @@ class WorkCategories(Base):
     __tablename__ = "work_categories"
     id: Mapped[int] = mapped_column(primary_key=True)
     category_name: Mapped[str] = mapped_column(String(100), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
+
+
+class Projects(Base):
+    __tablename__ = "projects"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    project_name: Mapped[str] = mapped_column(String(100), unique=True)
+    client_name: Mapped[str] = mapped_column(String(100), nullable=True)
+    description: Mapped[str] = mapped_column(Text, nullable=True)
+    created_by: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
 
