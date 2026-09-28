@@ -1,7 +1,6 @@
 import logging
 import os
 from datetime import date, timedelta
-from dotenv import load_dotenv
 from fastapi import FastAPI, Request, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -10,8 +9,6 @@ from src.logger import setup_logger
 from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log
 from src.utils import greet_user, get_today_logs, sort_logs_by_date
 
-# Load environment variables
-load_dotenv(os.getenv("CHRONICLE_CONFIG", ".env"))
 
 # Logger Setup
 setup_logger()
