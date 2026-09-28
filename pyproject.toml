@@ -5,6 +5,7 @@ description = "Chronicle is a Web application + Command line interface tool used
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "bcrypt>=5.0.0",
     "fastapi[standard]>=0.135.2",
     "openai>=2.30.0",
     "python-dotenv>=1.2.2",
