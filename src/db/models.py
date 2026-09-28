@@ -1,6 +1,6 @@
 from datetime import datetime, date, time
 from zoneinfo import ZoneInfo
-from sqlalchemy import String, Date, Time, DateTime
+from sqlalchemy import String, Date, Time, DateTime, Boolean
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
@@ -30,3 +30,14 @@ class Logs(Base):
             "created_at": self.created_at,
             "updated_at": self.updated_at
         }
+
+
+class Users(Base):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    first_name: Mapped[str] = mapped_column(String(100))
+    last_name: Mapped[str] = mapped_column(String(100))
+    email: Mapped[str] = mapped_column(String(100), unique=True)
+    password_hash: Mapped[str] = mapped_column(String(255))
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
