@@ -29,3 +29,19 @@ class DatabaseSession:
             raise
         finally:
             session.close()
+
+# ------------------- UPDATED APPROACH FOR DATABASE CONNECTION. ABOVE CODE TO BE REMOVED ----------------- #
+# Create Database Engine
+connect_args = {"check_same_thread": False} if settings.db_driver == "sqlite" else {}
+engine = create_engine(settings.database_url, connect_args=connect_args)
+
+# Create Session Factory
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# Create table on app startup if it doesn't exist
+Base.metadata.create_all(bind=engine)
+
+# Function to inject Database dependency
+def get_db():
+    with SessionLocal() as db:
+        yield db
