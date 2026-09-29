@@ -7,7 +7,7 @@ from datetime import datetime, date, timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from zoneinfo import ZoneInfo
-from src.db.models import Logs
+from src.db.models import Logs, Users
 from src.llm import LLM
 
 # Logger setup
@@ -115,4 +115,19 @@ def get_log_by_id(session: Session, log_id: int) -> dict | None:
         return None
     except Exception as e:
         logger.error(f"Error while fetching log entry via ID: {e}")
+        return None
+
+
+def get_user_by_email(session: Session, email: str) -> Users | None:
+    """
+    Utility function to get a user by email
+    """
+    try:
+        user_fetch_stmt = select(Users).where(Users.email == email)
+        user = session.execute(user_fetch_stmt).scalars().one_or_none()
+        if user is None:
+            logger.error(f"User not found: {email}")
+        return user
+    except Exception as e:
+        logger.error(f"Error while fetching user via email: {e}")
         return None
