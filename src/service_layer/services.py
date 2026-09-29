@@ -36,7 +36,6 @@ def add_log(session: Session, log_entry: str) -> None:
     except Exception as e:
         logger.error(f"Log entry insertion failed: {e}")
 
-
 def get_logs(session: Session, single_date: date | None = None, from_date: date | None = None, to_date: date | None = None) -> list[Logs]:
     """
     Function to read logs using 2 modes of filtering
@@ -62,7 +61,6 @@ def get_logs(session: Session, single_date: date | None = None, from_date: date 
         logger.error(f"Logs filtering failed: {e}")
         return []
 
-
 def update_log(session: Session, log_id: int, updated_log_entry: str) -> bool:
     """
     Function to update a log entry using ID
@@ -85,7 +83,6 @@ def update_log(session: Session, log_id: int, updated_log_entry: str) -> bool:
         logging.error(f"Log update failed: {e}")
         return False
 
-
 def delete_log(session: Session, log_id: int):
     """
     Function to delete a log entry using ID
@@ -101,7 +98,6 @@ def delete_log(session: Session, log_id: int):
         logger.error(f"Log deletion failed: {e}")
         return False
 
-
 def get_log_by_id(session: Session, log_id: int) -> dict | None:
     """
     Function to get a log entry by ID
@@ -116,7 +112,6 @@ def get_log_by_id(session: Session, log_id: int) -> dict | None:
     except Exception as e:
         logger.error(f"Error while fetching log entry via ID: {e}")
         return None
-
 
 def get_user_by_email(session: Session, email: str) -> Users | None:
     """

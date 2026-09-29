@@ -4,6 +4,7 @@ from datetime import date, timedelta
 from fastapi import FastAPI, Request, Form
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from src.api.auth_router import router as auth_router
 from src.db import DatabaseSession
 from src.logger import setup_logger
 from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log
@@ -18,6 +19,10 @@ logger = logging.getLogger("chronicle")
 db = DatabaseSession()
 
 app = FastAPI()
+
+# Add APIRouters
+app.include_router(auth_router)
+
 # Setup templating and static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
