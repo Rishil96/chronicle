@@ -2,6 +2,7 @@ import bcrypt
 import jwt
 import logging
 from datetime import datetime, UTC, timedelta
+from fastapi import Request, HTTPException, status
 from src.config import settings
 
 # Create logger
@@ -45,3 +46,16 @@ def decode_access_token(token: str) -> dict | None:
     except jwt.InvalidTokenError as e:
         logger.error(f"The access token is invalid. Error message: {e}")
         return None
+
+# Get current user
+def get_current_user(request: Request) -> dict:
+    """
+    This function returns the current user details by reading the access token from cookies.
+    """
+    access_token = request.cookies.get("access_token")
+    if access_token is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    decoded_payload = decode_access_token(access_token)
+    if decoded_payload is None:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+    return decoded_payload
