@@ -28,9 +28,6 @@ def login_user(email: str = Form(), password: str = Form(), session: Session = D
     """
     POST login route to log in user
     """
-    """
-    POST login route to log in user
-    """
     # Retrieve user by email
     # Case 1: User not found
     user: Users | None = get_user_by_email(session, email)
