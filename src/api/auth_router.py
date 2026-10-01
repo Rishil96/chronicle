@@ -23,6 +23,7 @@ def login_page(request: Request):
         context={}
     )
 
+
 @router.post("/login")
 def login_user(email: str = Form(), password: str = Form(), session: Session = Depends(get_db)):
     """
@@ -52,9 +53,18 @@ def login_user(email: str = Form(), password: str = Form(), session: Session = D
         url="/",
         status_code=status.HTTP_303_SEE_OTHER
     )
-    response.set_cookie(key="access_token", value=access_token, httponly=True)
+    response.set_cookie(key="access_token", value=access_token, httponly=True, samesite="lax")
     return response
+
 
 @router.get("/logout")
 def logout():
-    pass
+    """
+    Route to log out user from the session
+    """
+    response = RedirectResponse(
+        url="/auth/login",
+        status_code=status.HTTP_303_SEE_OTHER
+    )
+    response.delete_cookie(key="access_token")
+    return response
