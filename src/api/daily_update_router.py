@@ -1,17 +1,26 @@
 import logging
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Request
+from sqlalchemy.orm import Session
+from typing import Annotated
+from src.db import get_db
+from src.templates import templates
+from src.service_layer import get_all_categories
 
 router = APIRouter(prefix="/daily-updates", tags=["daily-updates"])
 logger = logging.getLogger("chronicle")
 
 
 @router.get("/new")
-def daily_update_page():
+def daily_update_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     """
     Page to add a new daily update
     """
-    pass
-
+    categories = get_all_categories(db)
+    return templates.TemplateResponse(
+        request=request,
+        name="add_daily_update.html",
+        context={"categories": categories}
+    )
 
 @router.post("")
 def add_daily_update():
