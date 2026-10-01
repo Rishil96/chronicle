@@ -53,16 +53,41 @@ async def auth_middleware(request: Request, call_next):
 @app.get("/")
 def home_page(request: Request):
     """
-    Home page
+    Home page after user is successfully authenticated
     """
-    greeting = greet_user()
+    # Retrieve access token from cookies to get user details
+    access_token = request.cookies.get("access_token", "")
+    user_details = decode_access_token(access_token)
+    first_name = user_details.get("first_name", "")
+    greeting = greet_user(first_name)
+    # Get today's date
+    today_date = date.today()
+    formatted_date = today_date.strftime("%A, %d %B %Y")
+    return templates.TemplateResponse(
+        request=request,
+        name="home.html",
+        context={"greeting": greeting, "today_date": formatted_date, "name": first_name}
+    )
+
+
+@app.get("/personal")
+def personal_page(request: Request):
+    """
+    Personal page after user is successfully authenticated to write logs
+    """
+    # Retrieve access token from cookies to get user details
+    access_token = request.cookies.get("access_token", "")
+    user_details = decode_access_token(access_token)
+    first_name = user_details.get("first_name", "")
+    greeting = greet_user(first_name)
+    # Get today's date
     today_date = date.today()
     formatted_date = today_date.strftime("%A, %d %B %Y")
     with db.get_session() as session:
         today_log_list = get_today_logs(session=session)
     return templates.TemplateResponse(
         request=request,
-        name="home.html",
+        name="personal.html",
         context={"greeting": greeting, "today_date": formatted_date, "logs": today_log_list}
     )
 
