@@ -6,7 +6,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from src.templates import templates
 from src.api import auth_router, daily_update_router
-from src.auth.auth import decode_access_token
+from src.auth import decode_access_token
 from src.db import DatabaseSession
 from src.logger import setup_logger
 from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log
@@ -59,7 +59,7 @@ def home_page(request: Request):
     # Retrieve access token from cookies to get user details
     access_token = request.cookies.get("access_token", "")
     user_details = decode_access_token(access_token)
-    first_name = user_details.get("first_name", "")
+    first_name = user_details.get("first_name", "") if user_details else ""
     greeting = greet_user(first_name)
     # Get today's date
     today_date = date.today()
@@ -79,7 +79,7 @@ def personal_page(request: Request):
     # Retrieve access token from cookies to get user details
     access_token = request.cookies.get("access_token", "")
     user_details = decode_access_token(access_token)
-    first_name = user_details.get("first_name", "")
+    first_name = user_details.get("first_name", "") if user_details else ""
     greeting = greet_user(first_name)
     # Get today's date
     today_date = date.today()
