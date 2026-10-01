@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chronicle | Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+    <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
+        <h1 class="text-3xl font-bold text-emerald-600 text-center mb-2">Chronicle</h1>
+        <p class="text-gray-500 text-center mb-8">Sign in to your account</p>
+        <form method="POST" action="{{ url_for('login_user') }}">
+            <div class="mb-4">
+                <label for="email" class="text-emerald-700 font-medium mb-1 block">Email</label>
+                <input type="email" name="email" id="email" class="border border-emerald-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div class="mb-4">
+                <label for="password" class="text-emerald-700 font-medium mb-1 block">Password</label>
+                <input type="password" name="password" id="password" class="border border-emerald-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <button type="submit" class="bg-emerald-500 text-white px-6 py-2 w-full rounded-lg font-medium hover:bg-emerald-600 cursor-pointer">Sign In</button>
+        </form>
+    </div>
+</body>
+</html>

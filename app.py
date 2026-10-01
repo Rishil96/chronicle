@@ -1,17 +1,17 @@
 import logging
 import os
 from datetime import date, timedelta
-from dotenv import load_dotenv
 from fastapi import FastAPI, Request, Form
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
+from src.templates import templates
+from src.api.auth_router import router as auth_router
+from src.auth.auth import decode_access_token
 from src.db import DatabaseSession
 from src.logger import setup_logger
 from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log
 from src.utils import greet_user, get_today_logs, sort_logs_by_date
 
-# Load environment variables
-load_dotenv(os.getenv("CHRONICLE_CONFIG", ".env"))
 
 # Logger Setup
 setup_logger()
@@ -21,9 +21,33 @@ logger = logging.getLogger("chronicle")
 db = DatabaseSession()
 
 app = FastAPI()
+
+# Add APIRouters
+app.include_router(auth_router)
+
 # Setup templating and static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+
+
+@app.middleware("http")
+async def auth_middleware(request: Request, call_next):
+    """
+    Middleware to handle authentication
+    """
+    # Allow white listed routes to pass through
+    white_listed_routes = ["/auth/login", "/static"]
+    if any(request.url.path.startswith(route) for route in white_listed_routes):
+        response = await call_next(request)
+        return response
+    # Retrieve access token from cookies
+    access_token = request.cookies.get("access_token")
+    # No access token or Incorrect access token scenario; redirect to login page
+    if access_token is None or decode_access_token(access_token) is None:
+        logger.error("No access token provided. Back to the lobby (login route).")
+        return RedirectResponse("/auth/login")
+    # Valid access token scenario
+    response = await call_next(request)
+    return response
 
 
 @app.get("/")
