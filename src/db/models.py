@@ -63,9 +63,9 @@ class Projects(Base):
 class DailyUpdates(Base):
     __tablename__ = "daily_updates"
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(100))
-    short_description: Mapped[str] = mapped_column(String(250), nullable=False)
-    long_description: Mapped[str] = mapped_column(Text, nullable=False)
+    category: Mapped[str] = mapped_column(String(100))
+    summary: Mapped[str] = mapped_column(String(250), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
