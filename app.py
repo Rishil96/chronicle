@@ -5,7 +5,7 @@ from fastapi import FastAPI, Request, Form
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from src.templates import templates
-from src.api.auth_router import router as auth_router
+from src.api import auth_router, daily_update_router
 from src.auth.auth import decode_access_token
 from src.db import DatabaseSession
 from src.logger import setup_logger
@@ -24,6 +24,7 @@ app = FastAPI()
 
 # Add APIRouters
 app.include_router(auth_router)
+app.include_router(daily_update_router)
 
 # Setup templating and static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
