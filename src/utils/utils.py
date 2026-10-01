@@ -12,19 +12,18 @@ EVENING = "Good Evening, {user_name}!"
 NIGHT = "GO TO SLEEP, {user_name}!"
 
 
-def greet_user():
+def greet_user(name):
     """
     Utility function to greet user
     """
-    user_name = os.getenv("USER_NAME")
     curr_time_hour = datetime.now().time().hour
     if 5 <= curr_time_hour < 12:
-        return MORNING.format(user_name=user_name)
+        return MORNING.format(user_name=name)
     elif 12 <= curr_time_hour < 16:
-        return AFTERNOON.format(user_name=user_name)
+        return AFTERNOON.format(user_name=name)
     elif 16 <= curr_time_hour < 21:
-        return EVENING.format(user_name=user_name)
-    return NIGHT.format(user_name=user_name)
+        return EVENING.format(user_name=name)
+    return NIGHT.format(user_name=name)
 
 
 def get_today_logs(session: Session) -> List[dict]:
