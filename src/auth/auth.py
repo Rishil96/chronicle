@@ -1,12 +1,10 @@
 import bcrypt
 import jwt
-import logging
 from datetime import datetime, UTC, timedelta
 from fastapi import Request, HTTPException, status
 from src.config import settings
+from src.logger import logger
 
-# Create logger
-logger = logging.getLogger("chronicle")
 
 # Generate password hash
 def hash_password(password: str) -> str:

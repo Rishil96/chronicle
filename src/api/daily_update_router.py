@@ -1,4 +1,3 @@
-import logging
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 from typing import Annotated
@@ -6,8 +5,9 @@ from src.db import get_db
 from src.templates import templates
 from src.service_layer import get_all_categories
 
+
+# Router object to handle daily updates functionality
 router = APIRouter(prefix="/daily-updates", tags=["daily-updates"])
-logger = logging.getLogger("chronicle")
 
 
 @router.get("/new")

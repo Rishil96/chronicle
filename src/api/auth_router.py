@@ -1,15 +1,15 @@
-import logging
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
-from src.templates import templates
 from src.auth import create_access_token, verify_password
-from src.db import get_db
-from src.db import Users
+from src.db import get_db, Users
+from src.logger import logger
 from src.service_layer import get_user_by_email
+from src.templates import templates
 
+
+# Router object to handle authentication functionality
 router = APIRouter(prefix="/auth", tags=["auth"])
-logger = logging.getLogger("chronicle")
 
 
 @router.get("/login")
