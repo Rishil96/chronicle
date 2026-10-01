@@ -47,7 +47,7 @@ class WorkCategories(Base):
     __tablename__ = "work_categories"
     id: Mapped[int] = mapped_column(primary_key=True)
     category_name: Mapped[str] = mapped_column(String(100), unique=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Projects(Base):
@@ -57,7 +57,7 @@ class Projects(Base):
     client_name: Mapped[str] = mapped_column(String(100))
     description: Mapped[str] = mapped_column(Text)
     created_by: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class DailyUpdates(Base):
