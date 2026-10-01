@@ -38,7 +38,7 @@ def decode_access_token(token: str) -> dict | None:
     This function decodes an access token given a jwt token.
     """
     try:
-        decoded_data = jwt.decode(jwt=token, key=settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
+        decoded_data = jwt.decode(jwt=token, key=settings.jwt_secret_key, algorithms=[settings.jwt_algorithm])
         return decoded_data
     except jwt.ExpiredSignatureError as e:
         logger.error(f"The access token has been expired. Error message: {e}")
