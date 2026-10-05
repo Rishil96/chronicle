@@ -1,2 +1,2 @@
 from .services import add_log, get_logs, delete_log, get_log_by_id, update_log, get_user_by_email
-from .daily_update_services import get_all_categories, add_daily_update
+from .daily_update_services import get_all_categories, add_daily_update, get_daily_updates
