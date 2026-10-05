@@ -1,6 +1,6 @@
 from datetime import datetime, date, time
 from sqlalchemy import String, Date, Time, DateTime, Boolean, Text, ForeignKey, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from src.config import IST
 
 
@@ -37,6 +37,7 @@ class Users(Base):
     password_hash: Mapped[str] = mapped_column(String(255))
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    daily_updates: Mapped[list["DailyUpdates"]] = relationship("DailyUpdates", back_populates="user")
 
 
 class WorkCategories(Base):
@@ -65,6 +66,7 @@ class DailyUpdates(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    user: Mapped[Users] = relationship(Users, back_populates="daily_updates")
 
 
 class ProjectLogs(Base):
