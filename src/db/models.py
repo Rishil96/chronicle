@@ -68,6 +68,20 @@ class DailyUpdates(Base):
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     user: Mapped[Users] = relationship(Users, back_populates="daily_updates")
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "category": self.category,
+            "summary": self.summary,
+            "description": self.description,
+            "user_id": self.user_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "user_first_name": self.user.first_name,
+            "user_last_name": self.user.last_name,
+            "date_of_creation": self.created_at.date()
+        }
+
 
 class ProjectLogs(Base):
     __tablename__ = "project_logs"

@@ -5,8 +5,9 @@ from typing import Annotated
 from src.auth import decode_access_token
 from src.db import get_db
 from src.logger import logger
-from src.service_layer import get_all_categories, add_daily_update
+from src.service_layer import get_all_categories, add_daily_update, get_daily_updates
 from src.templates import templates
+from src.utils import sort_logs_by_date
 
 
 # Router object to handle daily updates functionality
@@ -43,11 +44,19 @@ def new_daily_update(request: Request, category: str = Form(), summary: str = Fo
 
 
 @router.get("")
-def all_daily_updates():
+def all_daily_updates(request: Request, session: Session = Depends(get_db)):
     """
     Page to view daily updates of colleagues for the past week
     """
-    pass
+    # Read daily updates for past N days
+    past_updates = get_daily_updates(session)
+    past_updates = [past_update.to_dict() for past_update in past_updates]
+    past_updates = sort_logs_by_date(past_updates)
+    return templates.TemplateResponse(
+        request=request,
+        name="daily_updates.html",
+        context={"past_updates": past_updates}
+    )
 
 
 @router.put("/{daily_update_id}")
