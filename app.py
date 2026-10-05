@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from src.api import auth_router, daily_update_router
+from src.api import auth_router, daily_update_router, project_log_router
 from src.auth import decode_access_token
 from src.db import DatabaseSession
 from src.logger import logger
@@ -21,6 +21,7 @@ app = FastAPI()
 # Add APIRouters
 app.include_router(auth_router)
 app.include_router(daily_update_router)
+app.include_router(project_log_router)
 
 # Setup templating and static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
