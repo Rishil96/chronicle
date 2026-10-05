@@ -1,11 +1,7 @@
 from datetime import datetime, date, time
-from zoneinfo import ZoneInfo
 from sqlalchemy import String, Date, Time, DateTime, Boolean, Text, ForeignKey, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-
-
-# IST Timezone
-IST = ZoneInfo("Asia/Kolkata")
+from src.config import IST
 
 
 class Base(DeclarativeBase):

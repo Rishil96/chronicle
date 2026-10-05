@@ -1,4 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from zoneinfo import ZoneInfo
 
 
 class Settings(BaseSettings):
@@ -11,6 +12,7 @@ class Settings(BaseSettings):
     jwt_secret_key: str
     jwt_algorithm: str
     access_token_expire_minutes: int
+    daily_updates_days: int
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     @property
@@ -24,4 +26,7 @@ class Settings(BaseSettings):
         raise ValueError(f"Unsupported database driver: {self.db_driver}")
 
 
+# Global variables to be used across the project
 settings = Settings()   # noqa
+# IST Timezone
+IST = ZoneInfo("Asia/Kolkata")
