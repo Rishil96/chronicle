@@ -77,9 +77,9 @@ class DailyUpdates(Base):
             "user_id": self.user_id,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
-            "user_first_name": self.user.first_name,
-            "user_last_name": self.user.last_name,
-            "date_of_creation": self.created_at.date()
+            "user_name": f"{self.user.first_name} {self.user.last_name}",
+            "date_of_creation": self.created_at.date(),
+            "time_of_creation": self.updated_at.time() if self.updated_at else self.created_at.time(),
         }
 
 
