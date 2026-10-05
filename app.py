@@ -1,29 +1,26 @@
-import logging
 import os
 from datetime import date, timedelta
 from fastapi import FastAPI, Request, Form
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
-from src.templates import templates
-from src.api.auth_router import router as auth_router
-from src.auth.auth import decode_access_token
+from src.api import auth_router, daily_update_router
+from src.auth import decode_access_token
 from src.db import DatabaseSession
-from src.logger import setup_logger
+from src.logger import logger
+from src.templates import templates
 from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log
 from src.utils import greet_user, get_today_logs, sort_logs_by_date
 
 
-# Logger Setup
-setup_logger()
-logger = logging.getLogger("chronicle")
-
 # Database session setup
 db = DatabaseSession()
 
+# Main app object
 app = FastAPI()
 
 # Add APIRouters
 app.include_router(auth_router)
+app.include_router(daily_update_router)
 
 # Setup templating and static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -58,7 +55,7 @@ def home_page(request: Request):
     # Retrieve access token from cookies to get user details
     access_token = request.cookies.get("access_token", "")
     user_details = decode_access_token(access_token)
-    first_name = user_details.get("first_name", "")
+    first_name = user_details.get("first_name", "") if user_details else ""
     greeting = greet_user(first_name)
     # Get today's date
     today_date = date.today()
@@ -78,7 +75,7 @@ def personal_page(request: Request):
     # Retrieve access token from cookies to get user details
     access_token = request.cookies.get("access_token", "")
     user_details = decode_access_token(access_token)
-    first_name = user_details.get("first_name", "")
+    first_name = user_details.get("first_name", "") if user_details else ""
     greeting = greet_user(first_name)
     # Get today's date
     today_date = date.today()

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Daily Updates | Chronicle
+{% endblock %}
+
+{% block content %}
+    <div class="max-w-4xl mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-emerald-600 mb-8">Daily Updates</h1>
+        {% if past_updates %}
+            {% for date, updates in past_updates.items() %}
+                <h2 class="text-lg text-emerald-600 mb-6 py-3">{{ date.strftime('%B %d, %Y') }}</h2>
+                <ul class="space-y-3 mb-4">
+                    {% for update in updates %}
+                        <li class="bg-white rounded-lg shadow-sm border border-emerald-100 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-medium text-emerald-700">{{ update.user_name }}</span>
+                                <span class="text-sm text-gray-400">{{ update.time_of_creation }}</span>
+                            </div>
+                            <span class="text-xs text-emerald-500 font-medium uppercase tracking-wide">{{ update.category }}</span>
+                            <details class="mt-2 group">
+                                <summary class="text-gray-700 cursor-pointer font-medium list-none">{{ update.summary }}</summary>
+                                <p class="text-gray-600 mt-2 text-sm pl-4 border-1-2 border-emerald-200">{{ update.description }}</p>
+                            </details>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        {% else %}
+            <p class="text-emerald-600 italic text-center mt-8 text-lg">No updates yet for this period. Be the first to share what you've been working on!</p>
+        {% endif %}
+    </div>
+{% endblock %}

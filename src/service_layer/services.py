@@ -1,17 +1,16 @@
 """
 This module contains all operations to be performed on the Chronicle logging app
 """
-import logging
 import os
 from datetime import datetime, date, timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from zoneinfo import ZoneInfo
-from src.db.models import Logs, Users
+from src.db import Logs, Users
 from src.llm import LLM
+from src.logger import logger
 
-# Logger setup
-logger = logging.getLogger("chronicle")
+
 # Indian Standard Time
 IST = ZoneInfo("Asia/Kolkata")
 # Use LLM
@@ -80,7 +79,7 @@ def update_log(session: Session, log_id: int, updated_log_entry: str) -> bool:
         session.commit()
         return True
     except Exception as e:
-        logging.error(f"Log update failed: {e}")
+        logger.error(f"Log update failed: {e}")
         return False
 
 def delete_log(session: Session, log_id: int):

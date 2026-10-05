@@ -1,11 +1,7 @@
 from datetime import datetime, date, time
-from zoneinfo import ZoneInfo
 from sqlalchemy import String, Date, Time, DateTime, Boolean, Text, ForeignKey, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-
-
-# IST Timezone
-IST = ZoneInfo("Asia/Kolkata")
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from src.config import IST
 
 
 class Base(DeclarativeBase):
@@ -41,13 +37,14 @@ class Users(Base):
     password_hash: Mapped[str] = mapped_column(String(255))
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    daily_updates: Mapped[list["DailyUpdates"]] = relationship("DailyUpdates", back_populates="user")
 
 
 class WorkCategories(Base):
     __tablename__ = "work_categories"
     id: Mapped[int] = mapped_column(primary_key=True)
     category_name: Mapped[str] = mapped_column(String(100), unique=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class Projects(Base):
@@ -57,18 +54,33 @@ class Projects(Base):
     client_name: Mapped[str] = mapped_column(String(100))
     description: Mapped[str] = mapped_column(Text)
     created_by: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class DailyUpdates(Base):
     __tablename__ = "daily_updates"
     id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str] = mapped_column(String(100))
-    short_description: Mapped[str] = mapped_column(String(250), nullable=False)
-    long_description: Mapped[str] = mapped_column(Text, nullable=False)
+    category: Mapped[str] = mapped_column(String(100))
+    summary: Mapped[str] = mapped_column(String(250), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    user: Mapped[Users] = relationship(Users, back_populates="daily_updates")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "category": self.category,
+            "summary": self.summary,
+            "description": self.description,
+            "user_id": self.user_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "user_name": f"{self.user.first_name} {self.user.last_name}",
+            "date_of_creation": self.created_at.date(),
+            "time_of_creation": self.updated_at.time().strftime("%I:%M %p") if self.updated_at else self.created_at.time().strftime("%I:%M %p"),
+        }
 
 
 class ProjectLogs(Base):

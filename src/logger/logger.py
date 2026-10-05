@@ -13,3 +13,7 @@ def setup_logger():
     logger.addHandler(handler)
 
     return logger
+
+
+# Singleton logger object
+logger = setup_logger()

@@ -10,7 +10,7 @@
         <p class="text-lg text-emerald-600 mb-6"> {{ today_date }} </p>
     </div>
     <div class="flex gap-4 mb-8 justify-center">
-        <a href="" class="bg-emerald-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer">Add Daily Update</a>
+        <a href="{{ url_for('daily_update_page') }}" class="bg-emerald-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer">Add Daily Update</a>
         <a href="" class="bg-emerald-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer">Add Project Log</a>
     </div>
 {% endblock %}
