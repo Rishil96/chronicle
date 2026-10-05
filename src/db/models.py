@@ -79,7 +79,7 @@ class DailyUpdates(Base):
             "updated_at": self.updated_at,
             "user_name": f"{self.user.first_name} {self.user.last_name}",
             "date_of_creation": self.created_at.date(),
-            "time_of_creation": self.updated_at.time() if self.updated_at else self.created_at.time(),
+            "time_of_creation": self.updated_at.time().strftime("%I:%M %p") if self.updated_at else self.created_at.time().strftime("%I:%M %p"),
         }
 
 
