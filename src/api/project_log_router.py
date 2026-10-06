@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Form, Request, status
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from typing import Annotated
 from src.db import get_db
-from src.service_layer import get_all_projects
+from src.logger import logger
+from src.service_layer import get_all_projects, add_project_log
 from src.templates import templates
+from src.utils import get_user_id_from_cookie
 
 
 # Router object to handle project log functionality
@@ -24,8 +27,16 @@ def project_log_page(request: Request, db: Annotated[Session, Depends(get_db)]):
 
 
 @router.post("")
-def new_project_log():
-    pass
+def new_project_log(request: Request, db: Annotated[Session, Depends(get_db)], project_id: int = Form(), log: str = Form(...)):
+    """
+    POST route to make a new project log entry
+    """
+    # Read user ID from cookie
+    user_id = get_user_id_from_cookie(request=request)
+    # Make database entry
+    add_project_log(session=db, user_id=user_id, log=log, project_id=project_id)
+    logger.info(f"New project log added. User ID: {user_id} | Project ID: {project_id}")
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.get("")
