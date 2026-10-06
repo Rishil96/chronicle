@@ -38,6 +38,7 @@ class Users(Base):
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     daily_updates: Mapped[list["DailyUpdates"]] = relationship("DailyUpdates", back_populates="user")
+    project_logs: Mapped[list["ProjectLogs"]] = relationship("ProjectLogs", back_populates="user")
 
 
 class WorkCategories(Base):
@@ -91,3 +92,17 @@ class ProjectLogs(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    user: Mapped[Users] = relationship(Users, back_populates="project_logs")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "log": self.log,
+            "project_id": self.project_id,
+            "user_id": self.user_id,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "user_name": f"{self.user.first_name} {self.user.last_name}",
+            "date_of_creation": self.created_at.date(),
+            "time_of_creation": self.updated_at.time().strftime("%I:%M %p") if self.updated_at else self.created_at.time().strftime("%I:%M %p")
+        }
