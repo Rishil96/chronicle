@@ -7,7 +7,7 @@ Add Project Log | Chronicle
 {% block content %}
     <div class="max-w-4xl mx-auto px-6 py-8">
         <h1 class="text-3xl font-bold text-emerald-600 mb-8">Add Project Log</h1>
-        <form method="POST" action="">
+        <form method="POST" action="{{ url_for('new_project_log') }}">
             <div class="mb-6">
                 <label for="project" class="text-lg text-emerald-700 font-medium mb-1 block">Project</label>
                 <select name="project_id" id="project" class="border border-emerald-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-emerald-500">
