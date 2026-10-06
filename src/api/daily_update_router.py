@@ -39,12 +39,12 @@ def new_daily_update(request: Request, db: Annotated[Session, Depends(get_db)], 
 
 
 @router.get("")
-def all_daily_updates(request: Request, session: Session = Depends(get_db)):
+def all_daily_updates(request: Request, db: Annotated[Session, Depends(get_db)]):
     """
     Page to view daily updates of colleagues for the past week
     """
     # Read daily updates for past N days
-    past_updates = get_daily_updates(session)
+    past_updates = get_daily_updates(db)
     past_updates = [past_update.to_dict() for past_update in past_updates]
     past_updates = sort_logs_by_date(past_updates)
     return templates.TemplateResponse(

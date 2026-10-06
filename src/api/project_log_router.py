@@ -4,9 +4,9 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from src.db import get_db
 from src.logger import logger
-from src.service_layer import get_all_projects, add_project_log
+from src.service_layer import get_all_projects, add_project_log, get_project_logs
 from src.templates import templates
-from src.utils import get_user_id_from_cookie
+from src.utils import get_user_id_from_cookie, sort_logs_by_date
 
 
 # Router object to handle project log functionality
@@ -40,8 +40,19 @@ def new_project_log(request: Request, db: Annotated[Session, Depends(get_db)], p
 
 
 @router.get("")
-def all_project_logs():
-    pass
+def all_project_logs(request: Request, db: Annotated[Session, Depends(get_db)]):
+    """
+    Route to view all project logs for the past N days
+    """
+    # Read project logs for past N days
+    past_project_logs = get_project_logs(db)
+    past_project_logs = [past_project_log.to_dict() for past_project_log in past_project_logs]
+    past_project_logs = sort_logs_by_date(past_project_logs)
+    return templates.TemplateResponse(
+        request=request,
+        name="project_logs.html",
+        context={"past_project_logs": past_project_logs}
+    )
 
 
 @router.put("/{project_log_id}")
