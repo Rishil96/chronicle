@@ -1,13 +1,12 @@
-from fastapi import APIRouter, Depends, Form, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from typing import Annotated
-from src.auth import decode_access_token
 from src.db import get_db
 from src.logger import logger
 from src.service_layer import get_all_categories, add_daily_update, get_daily_updates
 from src.templates import templates
-from src.utils import sort_logs_by_date
+from src.utils import sort_logs_by_date, get_user_id_from_cookie
 
 
 # Router object to handle daily updates functionality
@@ -27,29 +26,25 @@ def daily_update_page(request: Request, db: Annotated[Session, Depends(get_db)])
     )
 
 @router.post("")
-def new_daily_update(request: Request, category: str = Form(), summary: str = Form(), description: str = Form(), session: Session = Depends(get_db)):
+def new_daily_update(request: Request, db: Annotated[Session, Depends(get_db)], category: str = Form(), summary: str = Form(), description: str = Form()):
     """
     Route to add a new daily update via HTML form
     """
     # Read user ID from cookie
-    access_token = request.cookies.get("access_token", "")
-    user_details = decode_access_token(access_token)
-    user_id = user_details.get("user_id")
-    if not isinstance(user_id, int):
-        raise HTTPException(status_code=404, detail="Not a valid login session by user. Please log in again.")
+    user_id = get_user_id_from_cookie(request=request)
     # Make database entry
-    add_daily_update(session=session, user_id=user_id, category=category, summary=summary, description=description)
+    add_daily_update(session=db, user_id=user_id, category=category, summary=summary, description=description)
     logger.info(f"New daily update added. User ID: {user_id} | Category: {category}")
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.get("")
-def all_daily_updates(request: Request, session: Session = Depends(get_db)):
+def all_daily_updates(request: Request, db: Annotated[Session, Depends(get_db)]):
     """
     Page to view daily updates of colleagues for the past week
     """
     # Read daily updates for past N days
-    past_updates = get_daily_updates(session)
+    past_updates = get_daily_updates(db)
     past_updates = [past_update.to_dict() for past_update in past_updates]
     past_updates = sort_logs_by_date(past_updates)
     return templates.TemplateResponse(

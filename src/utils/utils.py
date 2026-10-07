@@ -1,7 +1,8 @@
-import os
-from typing import List, Dict, Any
 from datetime import datetime, date
+from typing import List, Dict, Any
+from fastapi import HTTPException, Request, status
 from sqlalchemy.orm import Session
+from src.auth import decode_access_token
 from src.service_layer import get_logs
 
 
@@ -63,3 +64,16 @@ def print_logs_by_date(logs_by_date: dict):
     """
     for log_date, log_list in logs_by_date.items():
         print_logs(log_date=log_date, logs_list=log_list)
+
+
+def get_user_id_from_cookie(request: Request) -> int:
+    """
+    Utility Function to get user id from cookie
+    """
+    # Read user ID from cookie
+    access_token = request.cookies.get("access_token", "")
+    user_details = decode_access_token(access_token)
+    user_id = user_details.get("user_id") if user_details else None
+    if not isinstance(user_id, int):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not a valid login session by user. Please log in again.")
+    return user_id
