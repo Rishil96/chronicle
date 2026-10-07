@@ -8,9 +8,56 @@
     <div class="max-w-4xl mx-auto px-6 py-8">
         <h1 class="text-3xl font-bold text-emerald-600 mb-2"> {{ greeting }} </h1>
         <p class="text-lg text-emerald-600 mb-6"> {{ today_date }} </p>
-    </div>
-    <div class="flex gap-4 mb-8 justify-center">
-        <a href="{{ url_for('daily_update_page') }}" class="bg-emerald-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer">Add Daily Update</a>
-        <a href="{{ url_for('project_log_page') }}" class="bg-emerald-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer">Add Project Log</a>
+        <div class="flex gap-4 mb-8 justify-center">
+            <a href="{{ url_for('daily_update_page') }}" class="bg-emerald-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer">Add Daily Update</a>
+            <a href="{{ url_for('project_log_page') }}" class="bg-emerald-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-emerald-600 cursor-pointer">Add Project Log</a>
+        </div>
+        {% if recent_daily_updates or recent_project_logs %}
+            {% if recent_daily_updates %}
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-4">My Recent Updates</h2>
+                    {% for date, updates in recent_daily_updates.items() %}
+                        <h3 class="text-lg text-emerald-600 mb-6 py-3">{{ date.strftime('%B %d, %Y') }}</h3>
+                        <ul class="space-y-3 mb-4">
+                            {% for update in updates %}
+                                <li class="bg-white rounded-lg shadow-sm border border-emerald-100 p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-lg text-emerald-500 font-medium uppercase tracking-wide">{{ update.category }}</span>
+                                        <span class="text-sm text-gray-400">{{ update.time_of_creation }}</span>
+                                    </div>
+                                    <details class="mt-2 group">
+                                        <summary class="text-gray-700 cursor-pointer font-medium list-none">{{ update.summary }}</summary>
+                                        <p class="text-gray-600 mt-2 text-sm pl-4 border-l-2 border-emerald-200">{{ update.description }}</p>
+                                    </details>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            {% if recent_project_logs %}
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-emerald-600 mb-4">My Project Logs</h2>
+                    {% for date, project_logs in recent_project_logs.items() %}
+                        <h3 class="text-lg text-emerald-600 mb-6 py-3">{{ date.strftime('%B %d, %Y') }}</h3>
+                        <ul class="space-y-3 mb-4">
+                            {% for log in project_logs %}
+                                <li class="bg-white rounded-lg shadow-sm border border-emerald-100 p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-medium text-emerald-700">{{ log.project_name }}</span>
+                                        <div class="text-right">
+                                            <span class="text-sm text-gray-400 block">{{ log.time_of_creation }}</span>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-700 mt-2">{{ log.log }}</p>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% else %}
+            <p class="text-emerald-400 italic text-center mt-8 text-lg">Nothing logged recently — start your day by adding an update or project log!</p>
+        {% endif %}
     </div>
 {% endblock %}
