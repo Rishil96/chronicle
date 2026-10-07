@@ -16,6 +16,7 @@ def get_all_categories(session: Session) -> list[WorkCategories]:
     categories = session.execute(select(WorkCategories)).scalars().all()
     return list(categories)
 
+
 def add_daily_update(session: Session, user_id: int, category: str, summary: str, description: str) -> None:
     """
     Utility function which accepts daily update data and makes an entry into the database
@@ -33,6 +34,7 @@ def add_daily_update(session: Session, user_id: int, category: str, summary: str
         session.rollback()
         logger.error(f"Failed to add daily update. Error message: {e}")
 
+
 def get_daily_updates(session: Session) -> list[DailyUpdates]:
     """
     This function gets all daily updates from the database for past N days
@@ -40,3 +42,12 @@ def get_daily_updates(session: Session) -> list[DailyUpdates]:
     from_date = datetime.now(tz=IST) - timedelta(days=settings.daily_updates_days)
     daily_updates_list = session.execute(select(DailyUpdates).where(DailyUpdates.created_at >= from_date).order_by(DailyUpdates.created_at.desc())).scalars().all()
     return list(daily_updates_list)
+
+
+def get_recent_daily_updates_for_user(session: Session, user_id: int) -> list[DailyUpdates]:
+    """
+    Service layer function to get recently made daily updates by a user
+    """
+    from_date = datetime.now(tz=IST) - timedelta(hours=settings.recency_hours)
+    recent_updates = session.execute(select(DailyUpdates).where(DailyUpdates.user_id == user_id).where(DailyUpdates.created_at >= from_date)).scalars().all()
+    return list(recent_updates)

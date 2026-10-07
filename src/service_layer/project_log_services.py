@@ -41,3 +41,12 @@ def get_project_logs(session: Session) -> list[ProjectLogs]:
     from_date = datetime.now(tz=IST) - timedelta(days=settings.project_log_days)
     project_logs_list = session.execute(select(ProjectLogs).where(ProjectLogs.created_at >= from_date).order_by(ProjectLogs.created_at.desc())).scalars().all()
     return list(project_logs_list)
+
+
+def get_recent_project_logs_for_user(session: Session, user_id: int) -> list[ProjectLogs]:
+    """
+    Service layer function to get recently made project logs by a user
+    """
+    from_date = datetime.now(tz=IST) - timedelta(hours=settings.recency_hours)
+    recent_logs = session.execute(select(ProjectLogs).where(ProjectLogs.user_id == user_id).where(ProjectLogs.created_at >= from_date)).scalars().all()
+    return list(recent_logs)
