@@ -38,25 +38,14 @@ class Users(Base):
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     daily_updates: Mapped[list["DailyUpdates"]] = relationship("DailyUpdates", back_populates="user")
-    project_logs: Mapped[list["ProjectLogs"]] = relationship("ProjectLogs", back_populates="user")
 
 
-class WorkCategories(Base):
-    __tablename__ = "work_categories"
+class Topics(Base):
+    __tablename__ = "topics"
     id: Mapped[int] = mapped_column(primary_key=True)
-    category_name: Mapped[str] = mapped_column(String(100), unique=True)
+    topic_name: Mapped[str] = mapped_column(String(100), unique=True)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-
-
-class Projects(Base):
-    __tablename__ = "projects"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    project_name: Mapped[str] = mapped_column(String(100), unique=True)
-    client_name: Mapped[str] = mapped_column(String(100))
-    description: Mapped[str] = mapped_column(Text)
-    created_by: Mapped[int] = mapped_column(ForeignKey('users.id'))
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    project_logs: Mapped[list["ProjectLogs"]] = relationship("ProjectLogs", back_populates="project_details")
 
 
 class DailyUpdates(Base):
@@ -82,30 +71,4 @@ class DailyUpdates(Base):
             "user_name": f"{self.user.first_name} {self.user.last_name}",
             "date_of_creation": self.created_at.date(),
             "time_of_creation": self.updated_at.time().strftime("%I:%M %p") if self.updated_at else self.created_at.time().strftime("%I:%M %p"),
-        }
-
-
-class ProjectLogs(Base):
-    __tablename__ = "project_logs"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    log: Mapped[str] = mapped_column(Text)
-    project_id: Mapped[int] = mapped_column(ForeignKey('projects.id'), nullable=False)
-    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
-    updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
-    user: Mapped[Users] = relationship(Users, back_populates="project_logs")
-    project_details: Mapped[Projects] = relationship(Projects, back_populates="project_logs")
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "log": self.log,
-            "project_id": self.project_id,
-            "user_id": self.user_id,
-            "created_at": self.created_at,
-            "updated_at": self.updated_at,
-            "user_name": f"{self.user.first_name} {self.user.last_name}",
-            "project_name": self.project_details.project_name,
-            "date_of_creation": self.created_at.date(),
-            "time_of_creation": self.updated_at.time().strftime("%I:%M %p") if self.updated_at else self.created_at.time().strftime("%I:%M %p")
         }
