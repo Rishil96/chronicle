@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Add Daily Update | Chronicle
+{% endblock %}
+
+{% block content %}
+    <div class="max-w-4xl mx-auto px-6 py-8">
+        <h1 class="text-3xl font-bold text-emerald-600 mb-8">Add Work Update</h1>
+        <form method="POST" action="{{ url_for('new_work_update') }}">
+            <div class="mb-6">
+                <label for="topic" class="text-lg text-emerald-700 font-medium mb-1 block">Topic</label>
+                <select name="topic_id" id="topic" class="border border-emerald-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    {% for topic in topics %}
+                        <option value="{{ topic.id }}">{{ topic.topic_name }}</option>
+                    {% endfor %}
+                </select>
+                <p id="topic-description" class="text-sm text-gray-500 mt-2 italic"></p>
+            </div>
+            <div class="mb-6">
+                <label for="description" class="text-lg text-emerald-700 font-medium mb-1 block">Description</label>
+                <textarea name="description" id="description" rows="6" class="border border-emerald-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-y"></textarea>
+            </div>
+            <button type="submit" class="bg-emerald-500 text-white px-6 py-2 w-full rounded-lg font-medium hover:bg-emerald-600 cursor-pointer mt-4">Make Entry</button>
+        </form>
+    </div>
+    <script>
+        const topicDescriptions = {
+            {% for topic in topics %}
+                "{{ topic.id }}": "{{ topic.description }}",
+            {% endfor %}
+        };
+        document.getElementById("topic").addEventListener("change", function() {
+            const selectedID = this.value;
+            document.getElementById("topic-description").textContent = topicDescriptions[selectedID] || "";
+        });
+    </script>
+{% endblock %}

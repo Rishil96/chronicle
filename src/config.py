@@ -12,8 +12,7 @@ class Settings(BaseSettings):
     jwt_secret_key: str
     jwt_algorithm: str
     access_token_expire_minutes: int
-    daily_updates_days: int
-    project_log_days: int
+    work_update_history_days: int
     recency_hours: int
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
