@@ -17,9 +17,26 @@ def get_all_topics(session: Session) -> list[Topics]:
     return list(categories)
 
 
+def add_new_topic(session: Session, topic_name: str, description: str, created_by_id: int) -> None:
+    """
+    Service layer function to add a new topic
+    """
+    try:
+        new_topic = Topics(
+            topic_name=topic_name,
+            description=description,
+            created_by_id=created_by_id
+        )
+        session.add(new_topic)
+        session.commit()
+    except Exception as e:
+        session.rollback()
+        logger.error(f"Failed to add a new topic. Error message: {e}")
+
+
 def add_work_update(session: Session, user_id: int, topic_id: int, description: str) -> None:
     """
-    Utility function which accepts work update data and makes an entry into the database
+    Service function which accepts work update data and makes an entry into the database
     """
     try:
         new_work_update = WorkUpdates(
