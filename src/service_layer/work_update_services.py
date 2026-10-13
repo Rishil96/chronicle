@@ -34,13 +34,13 @@ def add_work_update(session: Session, user_id: int, topic_id: int, description: 
         logger.error(f"Failed to add work update. Error message: {e}")
 
 
-def get_daily_updates(session: Session) -> list[WorkUpdates]:
+def get_work_updates(session: Session) -> list[WorkUpdates]:
     """
     This function gets all daily updates from the database for past N days
     """
-    from_date = datetime.now(tz=IST) - timedelta(days=settings.daily_updates_days)
-    daily_updates_list = session.execute(select(WorkUpdates).where(WorkUpdates.created_at >= from_date).order_by(WorkUpdates.created_at.desc())).scalars().all()
-    return list(daily_updates_list)
+    from_date = datetime.now(tz=IST) - timedelta(days=settings.work_update_history_days)
+    work_updates_list = session.execute(select(WorkUpdates).where(WorkUpdates.created_at >= from_date).order_by(WorkUpdates.created_at.desc())).scalars().all()
+    return list(work_updates_list)
 
 
 def get_recent_daily_updates_for_user(session: Session, user_id: int) -> list[WorkUpdates]:

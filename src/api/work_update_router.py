@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from src.db import get_db
 from src.logger import logger
-from src.service_layer import get_all_topics, add_work_update, get_daily_updates
+from src.service_layer import get_all_topics, add_work_update, get_work_updates
 from src.templates import templates
 from src.utils import sort_logs_by_date, get_user_id_from_cookie
 
@@ -44,7 +44,7 @@ def all_work_updates(request: Request, db: Annotated[Session, Depends(get_db)]):
     Page to view daily updates of colleagues for the past week
     """
     # Read daily updates for past N days
-    past_updates = get_daily_updates(db)
+    past_updates = get_work_updates(db)
     past_updates = [past_update.to_dict() for past_update in past_updates]
     past_updates = sort_logs_by_date(past_updates)
     return templates.TemplateResponse(
