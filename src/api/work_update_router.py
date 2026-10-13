@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from src.db import get_db
 from src.logger import logger
-from src.service_layer import get_all_categories, add_daily_update, get_daily_updates
+from src.service_layer import get_all_topics, add_daily_update, get_daily_updates
 from src.templates import templates
 from src.utils import sort_logs_by_date, get_user_id_from_cookie
 
@@ -18,7 +18,7 @@ def work_updates_page(request: Request, db: Annotated[Session, Depends(get_db)])
     """
     Page to add a new daily update
     """
-    categories = get_all_categories(db)
+    categories = get_all_topics(db)
     return templates.TemplateResponse(
         request=request,
         name="add_daily_update.html",

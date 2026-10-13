@@ -9,7 +9,7 @@ from src.db import WorkUpdates, Topics
 from src.logger import logger
 
 
-def get_all_categories(session: Session) -> list[Topics]:
+def get_all_topics(session: Session) -> list[Topics]:
     """
     This function gets all categories from the database
     """
