@@ -21,13 +21,12 @@
                             {% for update in updates %}
                                 <li class="bg-white rounded-lg shadow-sm border border-emerald-100 p-4">
                                     <div class="flex items-center justify-between mb-2">
-                                        <span class="text-lg text-emerald-500 font-medium uppercase tracking-wide">{{ update.category }}</span>
+                                        <span class="text-lg text-emerald-500 font-medium tracking-wide">{{ update.topic }}</span>
                                         <span class="text-sm text-gray-400">{{ update.time_of_creation }}</span>
                                     </div>
-                                    <details class="mt-2 group">
-                                        <summary class="text-gray-700 cursor-pointer font-medium list-none">{{ update.summary }}</summary>
+                                    <div class="mb-2">
                                         <p class="text-gray-600 mt-2 text-sm pl-4 border-l-2 border-emerald-200">{{ update.description }}</p>
-                                    </details>
+                                    </div>
                                 </li>
                             {% endfor %}
                         </ul>
