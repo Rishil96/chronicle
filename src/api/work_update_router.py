@@ -14,7 +14,7 @@ router = APIRouter(prefix="/daily-updates", tags=["daily-updates"])
 
 
 @router.get("/new")
-def daily_update_page(request: Request, db: Annotated[Session, Depends(get_db)]):
+def work_updates_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     """
     Page to add a new daily update
     """
@@ -26,7 +26,7 @@ def daily_update_page(request: Request, db: Annotated[Session, Depends(get_db)])
     )
 
 @router.post("")
-def new_daily_update(request: Request, db: Annotated[Session, Depends(get_db)], category: str = Form(), summary: str = Form(), description: str = Form()):
+def new_work_update(request: Request, db: Annotated[Session, Depends(get_db)], category: str = Form(), summary: str = Form(), description: str = Form()):
     """
     Route to add a new daily update via HTML form
     """
@@ -39,7 +39,7 @@ def new_daily_update(request: Request, db: Annotated[Session, Depends(get_db)], 
 
 
 @router.get("")
-def all_daily_updates(request: Request, db: Annotated[Session, Depends(get_db)]):
+def all_work_updates(request: Request, db: Annotated[Session, Depends(get_db)]):
     """
     Page to view daily updates of colleagues for the past week
     """
@@ -52,19 +52,3 @@ def all_daily_updates(request: Request, db: Annotated[Session, Depends(get_db)])
         name="daily_updates.html",
         context={"past_updates": past_updates}
     )
-
-
-@router.put("/{daily_update_id}")
-def edit_daily_update(daily_update_id: int):
-    """
-    Route to edit a daily update
-    """
-    pass
-
-
-@router.delete("/{daily_update_id}")
-def delete_daily_update(daily_update_id: int):
-    """
-    Route to delete a daily update
-    """
-    pass
