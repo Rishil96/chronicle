@@ -18,11 +18,11 @@ def work_updates_page(request: Request, db: Annotated[Session, Depends(get_db)])
     """
     Page to add a new daily update
     """
-    categories = get_all_topics(db)
+    topics = get_all_topics(db)
     return templates.TemplateResponse(
         request=request,
         name="add_work_update.html",
-        context={"categories": categories}
+        context={"topics": topics}
     )
 
 @router.post("")
