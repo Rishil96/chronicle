@@ -9,11 +9,11 @@ from src.db import WorkUpdates, Topics
 from src.logger import logger
 
 
-def get_all_categories(session: Session) -> list[WorkCategories]:
+def get_all_categories(session: Session) -> list[Topics]:
     """
     This function gets all categories from the database
     """
-    categories = session.execute(select(WorkCategories)).scalars().all()
+    categories = session.execute(select(Topics)).scalars().all()
     return list(categories)
 
 
@@ -22,7 +22,7 @@ def add_daily_update(session: Session, user_id: int, category: str, summary: str
     Utility function which accepts daily update data and makes an entry into the database
     """
     try:
-        new_daily_update = DailyUpdates(
+        new_daily_update = WorkUpdates(
             category=category,
             summary=summary,
             description=description,
@@ -35,19 +35,19 @@ def add_daily_update(session: Session, user_id: int, category: str, summary: str
         logger.error(f"Failed to add daily update. Error message: {e}")
 
 
-def get_daily_updates(session: Session) -> list[DailyUpdates]:
+def get_daily_updates(session: Session) -> list[WorkUpdates]:
     """
     This function gets all daily updates from the database for past N days
     """
     from_date = datetime.now(tz=IST) - timedelta(days=settings.daily_updates_days)
-    daily_updates_list = session.execute(select(DailyUpdates).where(DailyUpdates.created_at >= from_date).order_by(DailyUpdates.created_at.desc())).scalars().all()
+    daily_updates_list = session.execute(select(WorkUpdates).where(WorkUpdates.created_at >= from_date).order_by(WorkUpdates.created_at.desc())).scalars().all()
     return list(daily_updates_list)
 
 
-def get_recent_daily_updates_for_user(session: Session, user_id: int) -> list[DailyUpdates]:
+def get_recent_daily_updates_for_user(session: Session, user_id: int) -> list[WorkUpdates]:
     """
     Service layer function to get recently made daily updates by a user
     """
     from_date = datetime.now(tz=IST) - timedelta(hours=settings.recency_hours)
-    recent_updates = session.execute(select(DailyUpdates).where(DailyUpdates.user_id == user_id).where(DailyUpdates.created_at >= from_date)).scalars().all()
+    recent_updates = session.execute(select(WorkUpdates).where(WorkUpdates.user_id == user_id).where(WorkUpdates.created_at >= from_date)).scalars().all()
     return list(recent_updates)
