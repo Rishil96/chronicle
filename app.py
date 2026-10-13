@@ -10,7 +10,7 @@ from src.auth import decode_access_token
 from src.db import DatabaseSession, get_db
 from src.logger import logger
 from src.templates import templates
-from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log, get_recent_daily_updates_for_user
+from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log, get_recent_work_updates_for_user
 from src.utils import greet_user, get_today_logs, sort_logs_by_date, get_user_id_from_cookie
 
 
@@ -64,7 +64,7 @@ def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     today_date = date.today()
     formatted_date = today_date.strftime("%A, %d %B %Y")
     # Get recent daily updates
-    recent_daily_updates = get_recent_daily_updates_for_user(session=db, user_id=user_id)
+    recent_daily_updates = get_recent_work_updates_for_user(session=db, user_id=user_id)
     recent_daily_updates = [update.to_dict() for update in recent_daily_updates]
     recent_daily_updates = sort_logs_by_date(recent_daily_updates)
     return templates.TemplateResponse(

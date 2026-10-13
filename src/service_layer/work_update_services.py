@@ -22,12 +22,12 @@ def add_work_update(session: Session, user_id: int, topic_id: int, description: 
     Utility function which accepts work update data and makes an entry into the database
     """
     try:
-        new_daily_update = WorkUpdates(
+        new_work_update = WorkUpdates(
             topic_id=topic_id,
             description=description,
             user_id=user_id
         )
-        session.add(new_daily_update)
+        session.add(new_work_update)
         session.commit()
     except Exception as e:
         session.rollback()
@@ -36,16 +36,16 @@ def add_work_update(session: Session, user_id: int, topic_id: int, description: 
 
 def get_work_updates(session: Session) -> list[WorkUpdates]:
     """
-    This function gets all daily updates from the database for past N days
+    This function gets all work updates from the database for past N days
     """
     from_date = datetime.now(tz=IST) - timedelta(days=settings.work_update_history_days)
     work_updates_list = session.execute(select(WorkUpdates).where(WorkUpdates.created_at >= from_date).order_by(WorkUpdates.created_at.desc())).scalars().all()
     return list(work_updates_list)
 
 
-def get_recent_daily_updates_for_user(session: Session, user_id: int) -> list[WorkUpdates]:
+def get_recent_work_updates_for_user(session: Session, user_id: int) -> list[WorkUpdates]:
     """
-    Service layer function to get recently made daily updates by a user
+    Service layer function to get recently made work updates by a user
     """
     from_date = datetime.now(tz=IST) - timedelta(hours=settings.recency_hours)
     recent_updates = session.execute(select(WorkUpdates).where(WorkUpdates.user_id == user_id).where(WorkUpdates.created_at >= from_date)).scalars().all()
