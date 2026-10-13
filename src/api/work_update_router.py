@@ -9,8 +9,8 @@ from src.templates import templates
 from src.utils import sort_logs_by_date, get_user_id_from_cookie
 
 
-# Router object to handle daily updates functionality
-router = APIRouter(prefix="/daily-updates", tags=["daily-updates"])
+# Router object to handle work updates functionality
+router = APIRouter(prefix="/work-updates", tags=["work-updates"])
 
 
 @router.get("/new")
@@ -21,27 +21,27 @@ def work_updates_page(request: Request, db: Annotated[Session, Depends(get_db)])
     categories = get_all_topics(db)
     return templates.TemplateResponse(
         request=request,
-        name="add_daily_update.html",
+        name="add_work_update.html",
         context={"categories": categories}
     )
 
 @router.post("")
-def new_work_update(request: Request, db: Annotated[Session, Depends(get_db)], category: str = Form(), summary: str = Form(), description: str = Form()):
+def new_work_update(request: Request, db: Annotated[Session, Depends(get_db)], topic_id: int = Form(), description: str = Form()):
     """
-    Route to add a new daily update via HTML form
+    Route to add a new work update via HTML form
     """
     # Read user ID from cookie
     user_id = get_user_id_from_cookie(request=request)
     # Make database entry
-    add_work_update(session=db, user_id=user_id, category=category, summary=summary, description=description)
-    logger.info(f"New daily update added. User ID: {user_id} | Category: {category}")
+    add_work_update(session=db, user_id=user_id, topic_id=topic_id, description=description)
+    logger.info(f"New daily update added. User ID: {user_id} | Topic ID: {topic_id}")
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.get("")
 def all_work_updates(request: Request, db: Annotated[Session, Depends(get_db)]):
     """
-    Page to view daily updates of colleagues for the past week
+    Page to view work updates of colleagues for the past week
     """
     # Read daily updates for past N days
     past_updates = get_work_updates(db)
@@ -49,6 +49,6 @@ def all_work_updates(request: Request, db: Annotated[Session, Depends(get_db)]):
     past_updates = sort_logs_by_date(past_updates)
     return templates.TemplateResponse(
         request=request,
-        name="daily_updates.html",
+        name="work_updates.html",
         context={"past_updates": past_updates}
     )
