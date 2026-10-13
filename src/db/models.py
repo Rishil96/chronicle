@@ -37,7 +37,7 @@ class Users(Base):
     password_hash: Mapped[str] = mapped_column(String(255))
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    work_updates: Mapped[list["WorkUpdates"]] = relationship("DailyUpdates", back_populates="user")
+    work_updates: Mapped[list["WorkUpdates"]] = relationship("WorkUpdates", back_populates="user")
 
 
 class Topics(Base):
@@ -46,7 +46,7 @@ class Topics(Base):
     topic_name: Mapped[str] = mapped_column(String(100), unique=True)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-
+    work_updates: Mapped[list["WorkUpdates"]] = relationship("WorkUpdates", back_populates="topic")
 
 class WorkUpdates(Base):
     __tablename__ = "work_updates"
