@@ -27,7 +27,7 @@ Add Daily Update | Chronicle
     <script>
         const topicDescriptions = {
             {% for topic in topics %}
-                "{{ topic.id }}": "{{ topic.description }}"
+                "{{ topic.id }}": "{{ topic.description }}",
             {% endfor %}
         };
         document.getElementById("topic").addEventListener("change", function() {
