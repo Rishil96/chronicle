@@ -65,9 +65,9 @@ def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     today_date = date.today()
     formatted_date = today_date.strftime("%A, %d %B %Y")
     # Get recent daily updates
-    recent_daily_updates = get_recent_work_updates_for_user(session=db, user_id=user_id)
-    recent_daily_updates = [update.to_dict() for update in recent_daily_updates]
-    recent_daily_updates = sort_logs_by_date(recent_daily_updates)
+    recent_work_updates = get_recent_work_updates_for_user(session=db, user_id=user_id)
+    recent_work_updates = [update.to_dict() for update in recent_work_updates]
+    recent_work_updates = sort_logs_by_date(recent_work_updates)
     return templates.TemplateResponse(
         request=request,
         name="home.html",
@@ -75,7 +75,7 @@ def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
             "greeting": greeting,
             "today_date": formatted_date,
             "name": first_name,
-            "recent_daily_updates": recent_daily_updates
+            "recent_work_updates": recent_work_updates
         }
     )
 
