@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 from src.db import get_db
 from src.logger import logger
-from src.service_layer import get_all_topics, add_daily_update, get_daily_updates
+from src.service_layer import get_all_topics, add_work_update, get_daily_updates
 from src.templates import templates
 from src.utils import sort_logs_by_date, get_user_id_from_cookie
 
@@ -33,7 +33,7 @@ def new_work_update(request: Request, db: Annotated[Session, Depends(get_db)], c
     # Read user ID from cookie
     user_id = get_user_id_from_cookie(request=request)
     # Make database entry
-    add_daily_update(session=db, user_id=user_id, category=category, summary=summary, description=description)
+    add_work_update(session=db, user_id=user_id, category=category, summary=summary, description=description)
     logger.info(f"New daily update added. User ID: {user_id} | Category: {category}")
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 

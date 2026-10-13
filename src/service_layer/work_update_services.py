@@ -11,20 +11,19 @@ from src.logger import logger
 
 def get_all_topics(session: Session) -> list[Topics]:
     """
-    This function gets all categories from the database
+    This function gets all work update topics from the database
     """
     categories = session.execute(select(Topics)).scalars().all()
     return list(categories)
 
 
-def add_daily_update(session: Session, user_id: int, category: str, summary: str, description: str) -> None:
+def add_work_update(session: Session, user_id: int, topic_id: int, description: str) -> None:
     """
-    Utility function which accepts daily update data and makes an entry into the database
+    Utility function which accepts work update data and makes an entry into the database
     """
     try:
         new_daily_update = WorkUpdates(
-            category=category,
-            summary=summary,
+            topic_id=topic_id,
             description=description,
             user_id=user_id
         )
@@ -32,7 +31,7 @@ def add_daily_update(session: Session, user_id: int, category: str, summary: str
         session.commit()
     except Exception as e:
         session.rollback()
-        logger.error(f"Failed to add daily update. Error message: {e}")
+        logger.error(f"Failed to add work update. Error message: {e}")
 
 
 def get_daily_updates(session: Session) -> list[WorkUpdates]:
