@@ -5,12 +5,12 @@ from fastapi import Depends, FastAPI, Form, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-from src.api import auth_router, daily_update_router, project_log_router
+from src.api import auth_router, daily_update_router
 from src.auth import decode_access_token
 from src.db import DatabaseSession, get_db
 from src.logger import logger
 from src.templates import templates
-from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log, get_recent_daily_updates_for_user, get_recent_project_logs_for_user
+from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log, get_recent_daily_updates_for_user
 from src.utils import greet_user, get_today_logs, sort_logs_by_date, get_user_id_from_cookie
 
 
@@ -23,7 +23,6 @@ app = FastAPI()
 # Add APIRouters
 app.include_router(auth_router)
 app.include_router(daily_update_router)
-app.include_router(project_log_router)
 
 # Setup templating and static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -68,10 +67,6 @@ def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     recent_daily_updates = get_recent_daily_updates_for_user(session=db, user_id=user_id)
     recent_daily_updates = [update.to_dict() for update in recent_daily_updates]
     recent_daily_updates = sort_logs_by_date(recent_daily_updates)
-    # Get recent project logs
-    recent_project_logs = get_recent_project_logs_for_user(session=db, user_id=user_id)
-    recent_project_logs = [log.to_dict() for log in recent_project_logs]
-    recent_project_logs = sort_logs_by_date(recent_project_logs)
     return templates.TemplateResponse(
         request=request,
         name="home.html",
@@ -79,8 +74,7 @@ def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
             "greeting": greeting,
             "today_date": formatted_date,
             "name": first_name,
-            "recent_daily_updates": recent_daily_updates,
-            "recent_project_logs": recent_project_logs
+            "recent_daily_updates": recent_daily_updates
         }
     )
 

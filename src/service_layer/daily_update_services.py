@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from src.config import settings, IST
-from src.db import WorkCategories, DailyUpdates
+from src.db import WorkUpdates, Topics
 from src.logger import logger
 
 
