@@ -51,7 +51,7 @@ async def auth_middleware(request: Request, call_next):
         logger.error("Invalid or expired access token provided. Redirecting to login page.")
         return RedirectResponse("/auth/login")
     # Valid access token scenario
-    initials = f"{user_details.get('first_name', 'U')[0].upper()}{user_details.get('last_name', '')[0].upper()}"
+    initials = f"{user_details.get('first_name', 'U')[0].upper()}{user_details.get('last_name', 'U')[0].upper()}"
     request.state.initials = initials
     response = await call_next(request)
     return response
