@@ -1,2 +1,1 @@
-from .services import add_log, get_logs, delete_log, get_log_by_id, update_log, get_user_by_email
-from .work_update_services import get_all_topics, add_new_topic, add_work_update, get_work_updates, get_recent_work_updates_for_user
+from .work_update_services import get_all_topics, add_new_topic, add_work_update, get_work_updates, get_recent_work_updates_for_user, get_user_by_email

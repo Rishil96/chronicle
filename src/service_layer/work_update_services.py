@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from src.config import settings, IST
-from src.db import WorkUpdates, Topics
+from src.db import WorkUpdates, Topics, Users
 from src.logger import logger
 
 
@@ -67,3 +67,18 @@ def get_recent_work_updates_for_user(session: Session, user_id: int) -> list[Wor
     from_date = datetime.now(tz=IST) - timedelta(hours=settings.recency_hours)
     recent_updates = session.execute(select(WorkUpdates).where(WorkUpdates.user_id == user_id).where(WorkUpdates.created_at >= from_date)).scalars().all()
     return list(recent_updates)
+
+
+def get_user_by_email(session: Session, email: str) -> Users | None:
+    """
+    Service layer function to get a user by email
+    """
+    try:
+        user_fetch_stmt = select(Users).where(Users.email == email)
+        user = session.execute(user_fetch_stmt).scalars().one_or_none()
+        if user is None:
+            logger.error(f"User not found: {email}")
+        return user
+    except Exception as e:
+        logger.error(f"Error while fetching user via email: {e}")
+        return None
