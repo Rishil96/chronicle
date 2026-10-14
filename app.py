@@ -42,10 +42,17 @@ async def auth_middleware(request: Request, call_next):
     # Retrieve access token from cookies
     access_token = request.cookies.get("access_token")
     # No access token or Incorrect access token scenario; redirect to login page
-    if access_token is None or decode_access_token(access_token) is None:
-        logger.error("No access token provided. Back to the lobby (login route).")
+    if access_token is None:
+        logger.error("No access token provided. Redirecting to login page.")
+        return RedirectResponse("/auth/login")
+    # Expired access token scenario
+    user_details = decode_access_token(access_token)
+    if user_details is None:
+        logger.error("Invalid or expired access token provided. Redirecting to login page.")
         return RedirectResponse("/auth/login")
     # Valid access token scenario
+    initials = f"{user_details.get('first_name', 'U')[0].upper()}{user_details.get('last_name', 'U')[0].upper()}"
+    request.state.initials = initials
     response = await call_next(request)
     return response
 

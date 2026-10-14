@@ -1,23 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-</head>
-<body>
-  <nav class="bg-emerald-500 text-white p-4 flex items-center justify-between">
-      <span class="font-bold text-3xl">Chronicle</span>
-      <div class="flex gap-6 pr-4">
-          <a href="{{ url_for('home_page') }}" class="font-medium text-lg hover:text-emerald-100">Home</a>
-          <a href="{{ url_for('all_work_updates') }}" class="font-medium text-lg hover:text-emerald-100">Work Updates</a>
-          <a href="{{ url_for('logout') }}" class="font-medium text-lg hover:text-emerald-100">Logout</a>
-      </div>
-  </nav>
-  <div>
-    {% block content %}{% endblock %}
-  </div>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    </head>
+    <body>
+        <nav class="bg-sky-500 text-white p-4 flex items-center justify-between">
+            <span class="font-bold text-3xl leading-none">
+                <a href="{{ url_for('home_page') }}">Chronicle</a>
+            </span>
+            <div class="flex items-center gap-6 pr-4">
+                <a href="{{ url_for('home_page') }}" class="font-medium text-lg hover:text-sky-100">Home</a>
+                <a href="{{ url_for('all_work_updates') }}" class="font-medium text-lg hover:text-sky-100">Updates</a>
+                <div class="relative group">
+                    <button class="flex h-9 w-9 items-center justify-center rounded-full bg-white text-sky-600 font-bold leading-none cursor-pointer">{{ request.state.initials }}</button>
+                    <div class="absolute right-0 hidden w-48 rounded-lg bg-white pt-2 shadow-lg group-hover:block">
+                        <a href="#" class="block rounded-t-lg px-4 py-2 text-slate-700 hover:bg-sky-50">Change Password</a>
+                        <a href="{{ url_for('logout') }}" class=" block rounded-b-lg px-4 py-2 text-slate-700 hover:bg-sky-50">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="bg-slate-50 min-h-screen">
+        {% block content %}{% endblock %}
+        </div>
+    </body>
 </html>

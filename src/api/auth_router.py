@@ -47,7 +47,7 @@ def login_user(email: str = Form(), password: str = Form(), session: Session = D
         )
     # Case 3: Successful user authentication
     access_token = create_access_token(
-        data={"sub": user.email, "user_id": user.id, "first_name": user.first_name},
+        data={"sub": user.email, "user_id": user.id, "first_name": user.first_name, "last_name": user.last_name},
     )
     response = RedirectResponse(
         url="/",
