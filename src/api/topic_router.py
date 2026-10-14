@@ -6,7 +6,6 @@ from src.db import get_db
 from src.logger import logger
 from src.service_layer import add_new_topic
 from src.templates import templates
-from src.utils import get_user_id_from_cookie
 
 
 # Router object to handle topics functionality
@@ -30,8 +29,8 @@ def new_topic(request: Request, db: Annotated[Session, Depends(get_db)], topic_n
     """
     POST route to add a new topic
     """
-    # Read user ID from cookie
-    user_id = get_user_id_from_cookie(request=request)
+    # Read user ID from request state
+    user_id = request.state.user_id
     # Add new topic
     add_new_topic(session=db, topic_name=topic_name, description=description, created_by_id=user_id)
     logger.info(f"New Topic added | User ID: {user_id} | Topic Name: {topic_name}")
