@@ -1,21 +1,17 @@
-import os
-from datetime import date, timedelta
+from datetime import date
 from typing import Annotated
-from fastapi import Depends, FastAPI, Form, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from src.api import auth_router, work_update_router, topic_router
 from src.auth import decode_access_token
-from src.db import DatabaseSession, get_db
+from src.db import get_db
 from src.logger import logger
 from src.templates import templates
 from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log, get_recent_work_updates_for_user
 from src.utils import greet_user, get_today_logs, sort_logs_by_date, get_user_id_from_cookie
 
-
-# Database session setup
-db_conn = DatabaseSession()
 
 # Main app object
 app = FastAPI()
@@ -83,150 +79,4 @@ def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
             "name": first_name,
             "recent_work_updates": recent_work_updates
         }
-    )
-
-
-@app.get("/personal")
-def personal_page(request: Request):
-    """
-    Personal page after user is successfully authenticated to write logs
-    """
-    # Retrieve access token from cookies to get user details
-    access_token = request.cookies.get("access_token", "")
-    user_details = decode_access_token(access_token)
-    first_name = user_details.get("first_name", "") if user_details else ""
-    greeting = greet_user(first_name)
-    # Get today's date
-    today_date = date.today()
-    formatted_date = today_date.strftime("%A, %d %B %Y")
-    with db_conn.get_session() as session:
-        today_log_list = get_today_logs(session=session)
-    return templates.TemplateResponse(
-        request=request,
-        name="personal.html",
-        context={"greeting": greeting, "today_date": formatted_date, "logs": today_log_list}
-    )
-
-
-@app.get("/history")
-def history_page(request: Request):
-    """
-    History page
-    """
-    history_days = int(os.getenv("HISTORY_DAYS", 30))
-    to_date = date.today()
-    from_date = to_date - timedelta(days=history_days)
-    with db_conn.get_session() as session:
-        history_log_list = get_logs(session=session, from_date=from_date, to_date=to_date)
-        history_log_list = [log.to_dict() for log in history_log_list]
-    # Group logs by date
-    history_logs_by_date = sort_logs_by_date(logs_list=history_log_list)
-    return templates.TemplateResponse(
-        request=request,
-        name="history.html",
-        context={"logs_by_date": history_logs_by_date}
-    )
-
-
-@app.get("/filter")
-def filter_page(request: Request):
-    return templates.TemplateResponse(
-        request=request,
-        name="filter.html",
-        context={}
-    )
-
-
-@app.post("/logs")
-def add_logs(request: Request, log_entry: str = Form(...)):
-    """
-    Route to add a log entry via HTMX from Home route
-    """
-    with db_conn.get_session() as session:
-        add_log(session=session, log_entry=log_entry)
-        today_log_list = get_today_logs(session=session)
-    return templates.TemplateResponse(
-        request=request,
-        name="_logs_list.html",
-        context={"logs": today_log_list}
-    )
-
-
-@app.delete("/logs/{log_id}")
-def delete_logs(request: Request, log_id: int):
-    """
-    Route to delete a log entry via log ID
-    """
-    with db_conn.get_session() as session:
-        delete_log(session=session, log_id=log_id)
-        today_log_list = get_today_logs(session=session)
-    return templates.TemplateResponse(
-        request=request,
-        name="_logs_list.html",
-        context={"logs": today_log_list}
-    )
-
-
-@app.get("/logs/{log_id}/edit")
-def edit_logs(request: Request, log_id: int):
-    """
-    Route to edit a log entry via log ID
-    """
-    with db_conn.get_session() as session:
-        log_to_edit = get_log_by_id(session=session, log_id=log_id)
-    return templates.TemplateResponse(
-        request=request,
-        name="_log_edit_form.html",
-        context={"log": log_to_edit}
-    )
-
-
-@app.put("/logs/{log_id}")
-def update_logs(request: Request, log_id: int, log_entry: str = Form(...)):
-    """
-    Route to update a log entry via log ID
-    """
-    with db_conn.get_session() as session:
-        update_log(session=session, log_id=log_id, updated_log_entry=log_entry)
-        today_log_list = get_today_logs(session=session)
-    return templates.TemplateResponse(
-        request=request,
-        name="_logs_list.html",
-        context={"logs": today_log_list}
-    )
-
-
-@app.get("/logs/{log_id}/cancel")
-def cancel_log_update(request: Request, log_id: int):
-    """
-    Route to cancel a log entry via log ID and return partial to recreate original log list item
-    """
-    with db_conn.get_session() as session:
-        log = get_log_by_id(session=session, log_id=log_id)
-    return templates.TemplateResponse(
-        request=request,
-        name="_log_item.html",
-        context={"log": log}
-    )
-
-
-@app.post("/filter")
-def filter_logs(request: Request, single_date: date | None = Form(None), from_date: date | None = Form(None), to_date: date | None = Form(None)):
-    """
-    Route to filter logs via date range and return partial HTML
-    """
-    with db_conn.get_session() as session:
-        if single_date:
-            logs = get_logs(session=session, single_date=single_date)
-        else:
-            logs = get_logs(session=session, from_date=from_date, to_date=to_date)
-        logs = [log.to_dict() for log in logs]
-
-    # Group logs by date
-    filtered_logs_by_date = sort_logs_by_date(logs_list=logs)
-
-    return templates.TemplateResponse(
-        request=request,
-        name="_filter_results.html",
-        context={"logs_by_date": filtered_logs_by_date}
     )
