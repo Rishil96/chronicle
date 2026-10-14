@@ -58,6 +58,7 @@ async def auth_middleware(request: Request, call_next):
 
 
 @app.get("/")
+@app.get("/home")
 def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     """
     Home page after user is successfully authenticated
