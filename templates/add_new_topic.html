@@ -10,11 +10,11 @@ Add Project Log | Chronicle
         <form method="POST" action="{{ url_for('new_topic') }}">
             <div class="mb-6">
                 <label for="topic" class="text-lg text-sky-700 font-medium mb-1 block">Topic Name</label>
-                <input type="text" id="topic" name="topic_name" class="border border-sky-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-sky-500">
+                <input type="text" id="topic" name="topic_name" class="border border-sky-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-sky-500" required>
             </div>
             <div class="mb-6">
                 <label for="description" class="text-lg text-sky-700 font-medium mb-1 block">Description</label>
-                <textarea name="description" id="description" rows="6" class="border border-sky-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-sky-500 resize-y"></textarea>
+                <textarea name="description" id="description" rows="6" class="border border-sky-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-sky-500 resize-y" required></textarea>
             </div>
             <button type="submit" class="bg-sky-500 text-white px-6 py-2 w-full rounded-lg font-medium hover:bg-sky-600 cursor-pointer mt-4">Add Topic</button>
         </form>
