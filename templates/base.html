@@ -9,10 +9,10 @@
 </head>
 <body>
   <nav class="bg-sky-500 text-white p-4 flex items-center justify-between">
-      <span class="font-bold text-3xl">Chronicle</span>
+      <span class="font-bold text-3xl"><a href="{{ url_for('home_page') }}">Chronicle</a></span>
       <div class="flex gap-6 pr-4">
           <a href="{{ url_for('home_page') }}" class="font-medium text-lg hover:text-sky-100">Home</a>
-          <a href="{{ url_for('all_work_updates') }}" class="font-medium text-lg hover:text-sky-100">Work Updates</a>
+          <a href="{{ url_for('all_work_updates') }}" class="font-medium text-lg hover:text-sky-100">Updates</a>
           <div class="relative group">
               <button class="bg-white text-sky-600 font-bold w-9 h-9 rounded-full pb-2 flex items-center justify-center cursor-pointer">{{ request.state.initials }}</button>
               <div class="absolute right-0 pt-2 w-48 bg-white rounded-lg shadow-lg hidden group-hover:block">

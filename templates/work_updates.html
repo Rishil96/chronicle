@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="max-w-4xl mx-auto px-6 py-8">
-        <h1 class="text-3xl font-bold text-sky-600 mb-8">Daily Updates</h1>
+        <h1 class="text-3xl font-bold text-sky-600 mb-8">Work Updates</h1>
         {% if past_updates %}
             {% for date, updates in past_updates.items() %}
                 <h2 class="text-lg text-sky-600 mb-6 py-3">{{ date.strftime('%B %d, %Y') }}</h2>
