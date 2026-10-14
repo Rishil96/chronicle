@@ -10,7 +10,7 @@ from src.db import get_db
 from src.logger import logger
 from src.templates import templates
 from src.service_layer import get_recent_work_updates_for_user
-from src.utils import greet_user, get_today_logs, sort_logs_by_date, get_user_id_from_cookie
+from src.utils import greet_user, get_user_id_from_cookie
 
 
 # Main app object
