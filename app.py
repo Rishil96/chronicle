@@ -10,7 +10,7 @@ from src.db import get_db
 from src.logger import logger
 from src.templates import templates
 from src.service_layer import get_recent_work_updates_for_user
-from src.utils import greet_user, get_user_id_from_cookie
+from src.utils import greet_user
 
 
 # Main app object
@@ -47,8 +47,12 @@ async def auth_middleware(request: Request, call_next):
         logger.error("Invalid or expired access token provided. Redirecting to login page.")
         return RedirectResponse("/auth/login")
     # Valid access token scenario
+    # Add user initials in request state
     initials = f"{user_details.get('first_name', 'U')[0].upper()}{user_details.get('last_name', 'U')[0].upper()}"
     request.state.initials = initials
+    # Add user ID in request state
+    request.state.user_id = user_details.get("user_id", -1)
+    # Create response object and return it
     response = await call_next(request)
     return response
 
@@ -62,13 +66,12 @@ def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     access_token = request.cookies.get("access_token", "")
     user_details = decode_access_token(access_token)
     first_name = user_details.get("first_name", "") if user_details else ""
-    user_id = get_user_id_from_cookie(request=request)
     greeting = greet_user(first_name)
     # Get today's date
     today_date = date.today()
     formatted_date = today_date.strftime("%A, %d %B %Y")
     # Get recent daily updates
-    recent_work_updates = get_recent_work_updates_for_user(session=db, user_id=user_id)
+    recent_work_updates = get_recent_work_updates_for_user(session=db, user_id=request.state.user_id)
     recent_work_updates = [update.to_dict() for update in recent_work_updates]
     return templates.TemplateResponse(
         request=request,
