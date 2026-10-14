@@ -6,7 +6,7 @@ from src.db import get_db
 from src.logger import logger
 from src.service_layer import get_all_topics, add_work_update, get_work_updates
 from src.templates import templates
-from src.utils import sort_work_updates_by_date, get_user_id_from_cookie
+from src.utils import sort_work_updates_by_date
 
 
 # Router object to handle work updates functionality
@@ -31,7 +31,7 @@ def new_work_update(request: Request, db: Annotated[Session, Depends(get_db)], t
     Route to add a new work update via HTML form
     """
     # Read user ID from cookie
-    user_id = get_user_id_from_cookie(request=request)
+    user_id = request.state.user_id
     # Make database entry
     add_work_update(session=db, user_id=user_id, topic_id=topic_id, description=description)
     logger.info(f"New daily update added. User ID: {user_id} | Topic ID: {topic_id}")
