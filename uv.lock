@@ -123,6 +123,7 @@ dependencies = [
     { name = "pydantic-settings" },
     { name = "pyjwt" },
     { name = "sqlalchemy" },
+    { name = "starlette" },
     { name = "typer" },
     { name = "tzdata" },
 ]
@@ -136,6 +137,7 @@ requires-dist = [
     { name = "pydantic-settings", specifier = ">=2.13.1" },
     { name = "pyjwt", specifier = ">=2.15.0" },
     { name = "sqlalchemy", specifier = ">=2.0.48" },
+    { name = "starlette", specifier = ">=1.0.0" },
     { name = "typer", specifier = ">=0.24.1" },
     { name = "tzdata", specifier = ">=2025.3" },
 ]
