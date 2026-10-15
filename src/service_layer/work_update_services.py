@@ -65,7 +65,7 @@ def get_recent_work_updates_for_user(session: Session, user_id: int) -> list[Wor
     Service layer function to get recently made work updates by a user
     """
     from_date = datetime.now(tz=IST) - timedelta(hours=settings.recency_hours)
-    recent_updates = session.execute(select(WorkUpdates).where(WorkUpdates.user_id == user_id).where(WorkUpdates.created_at >= from_date)).scalars().all()
+    recent_updates = session.execute(select(WorkUpdates).where(WorkUpdates.user_id == user_id).where(WorkUpdates.created_at >= from_date).order_by(WorkUpdates.created_at.desc())).scalars().all()
     return list(recent_updates)
 
 
