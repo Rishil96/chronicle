@@ -6,7 +6,7 @@ from src.db import get_db, Users
 from src.logger import logger
 from src.service_layer import get_user_by_email
 from src.templates import templates
-
+from src.utils import set_flash, get_flash
 
 # Router object to handle authentication functionality
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -17,15 +17,16 @@ def login_page(request: Request):
     """
     GET login route to render login page
     """
+    flash = get_flash(request=request)
     return templates.TemplateResponse(
         request=request,
         name="login.html",
-        context={}
+        context={"flash": flash}
     )
 
 
 @router.post("/login")
-def login_user(email: str = Form(), password: str = Form(), session: Session = Depends(get_db)):
+def login_user(request: Request, email: str = Form(), password: str = Form(), session: Session = Depends(get_db)):
     """
     POST login route to log in user
     """
@@ -34,6 +35,7 @@ def login_user(email: str = Form(), password: str = Form(), session: Session = D
     user: Users | None = get_user_by_email(session, email)
     if user is None:
         logger.error(f"User with email {email} not found")
+        set_flash(request=request, message="Invalid email or password.")
         return RedirectResponse(
             url="/auth/login",
             status_code=status.HTTP_303_SEE_OTHER
@@ -41,6 +43,7 @@ def login_user(email: str = Form(), password: str = Form(), session: Session = D
     # Case 2: Incorrect credentials
     if not verify_password(password, user.password_hash):
         logger.error(f"Incorrect password entered for email {email}")
+        set_flash(request=request, message="Invalid email or password.")
         return RedirectResponse(
             url="/auth/login",
             status_code=status.HTTP_303_SEE_OTHER
