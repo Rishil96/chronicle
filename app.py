@@ -4,13 +4,15 @@ from fastapi import Depends, FastAPI, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
+from starlette.middleware.sessions import SessionMiddleware
 from src.api import auth_router, work_update_router, topic_router, user_router
 from src.auth import decode_access_token
+from src.config import settings
 from src.db import get_db
 from src.logger import logger
 from src.templates import templates
 from src.service_layer import get_recent_work_updates_for_user
-from src.utils import greet_user
+from src.utils import greet_user, get_flash
 
 
 # Main app object
@@ -25,6 +27,8 @@ app.include_router(user_router)
 # Setup templating and static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Add app middlewares
+app.add_middleware(SessionMiddleware, secret_key=settings.jwt_secret_key)   # noqa
 
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
@@ -75,6 +79,8 @@ def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     # Get recent daily updates
     recent_work_updates = get_recent_work_updates_for_user(session=db, user_id=request.state.user_id)
     recent_work_updates = [update.to_dict() for update in recent_work_updates]
+    # Get flash messages
+    flash = get_flash(request=request)
     return templates.TemplateResponse(
         request=request,
         name="home.html",
@@ -82,6 +88,7 @@ def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
             "greeting": greeting,
             "today_date": formatted_date,
             "name": first_name,
-            "recent_work_updates": recent_work_updates
+            "recent_work_updates": recent_work_updates,
+            "flash": flash
         }
     )

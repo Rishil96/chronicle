@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List, Dict, Any
-from fastapi import HTTPException, Request, status
-from src.auth import decode_access_token
+from fastapi import Request
 
 
 # Greeting constants
@@ -38,3 +37,20 @@ def sort_work_updates_by_date(updates_list: List[dict]) -> Dict[Any, Any]:
     # Sort history dict by date in descending order
     work_updates_by_date = dict(sorted(work_updates_by_date.items(), reverse=True))
     return work_updates_by_date
+
+
+def set_flash(request: Request, message: str, category: str = "error") -> None:
+    """
+    Utility Function to set flash message
+    """
+    request.session["flash"] = {
+        "message": message,
+        "category": category
+    }
+
+
+def get_flash(request: Request) -> dict | None:
+    """
+    Utility Function to get flash message
+    """
+    return request.session.pop("flash", None)

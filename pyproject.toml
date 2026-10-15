@@ -7,10 +7,12 @@ requires-python = ">=3.13"
 dependencies = [
     "bcrypt>=5.0.0",
     "fastapi[standard]>=0.135.2",
+    "itsdangerous>=2.2.0",
     "openai>=2.30.0",
     "pydantic-settings>=2.13.1",
     "pyjwt>=2.15.0",
     "sqlalchemy>=2.0.48",
+    "starlette>=1.0.0",
     "typer>=0.24.1",
     "tzdata>=2025.3",
 ]
