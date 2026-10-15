@@ -8,6 +8,7 @@
     <div class="max-w-4xl mx-auto px-6 py-8">
         <h1 class="text-3xl font-bold text-sky-600 mb-2"> {{ greeting }} </h1>
         <p class="text-lg text-sky-600 mb-6"> {{ today_date }} </p>
+        {% include "_flash_message.html" %}
         <div class="flex gap-4 mb-20 justify-center">
             <a href="{{ url_for('work_updates_page') }}" class="bg-sky-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-sky-600 cursor-pointer">Add Work Update</a>
             <a href="{{ url_for('add_topic_page') }}" class="bg-sky-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-sky-600 cursor-pointer">Add New Topic</a>
