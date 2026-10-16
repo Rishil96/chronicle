@@ -1,7 +1,9 @@
+from datetime import UTC, datetime, timedelta
+
 import bcrypt
 import jwt
-from datetime import datetime, UTC, timedelta
-from fastapi import Request, HTTPException, status
+from fastapi import HTTPException, Request, status
+
 from src.config import settings
 from src.logger import logger
 
