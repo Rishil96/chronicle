@@ -2,10 +2,12 @@
 This module contains all operations to be performed on the Chronicle Daily updates functionality
 """
 from datetime import datetime, timedelta
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from src.config import settings, IST
-from src.db import WorkUpdates, Topics, Users
+
+from src.config import IST, settings
+from src.db import Topics, Users, WorkUpdates
 from src.logger import logger
 
 
