@@ -1,19 +1,20 @@
 from datetime import date
 from typing import Annotated
+
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from starlette.middleware.sessions import SessionMiddleware
-from src.api import auth_router, work_update_router, topic_router, user_router
+
+from src.api import auth_router, topic_router, user_router, work_update_router
 from src.auth import decode_access_token
 from src.config import settings
 from src.db import get_db
 from src.logger import logger
-from src.templates import templates
 from src.service_layer import get_recent_work_updates_for_user
-from src.utils import greet_user, get_flash
-
+from src.templates import templates
+from src.utils import get_flash, greet_user
 
 # Main app object
 app = FastAPI()
