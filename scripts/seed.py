@@ -1,4 +1,5 @@
 import bcrypt
+
 from src.config import settings
 from src.db import Topics, Users, get_db
 
