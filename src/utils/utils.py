@@ -1,30 +1,26 @@
-from datetime import datetime
-from typing import List, Dict, Any
+import random
+from typing import Any
+
 from fastapi import Request
 
-
 # Greeting constants
-MORNING = "Good Morning, {user_name}!"
-AFTERNOON = "Good Afternoon, {user_name}!"
-EVENING = "Good Evening, {user_name}!"
-NIGHT = "GO TO SLEEP, {user_name}!"
+GREETINGS = [
+    "Hello, {name}!",
+    "Welcome back, {name}!",
+    "Good to see you, {name}.",
+    "Hi {name}!",
+    "Hey {name}!",
+]
 
 
 def greet_user(name):
     """
     Utility function to greet user
     """
-    curr_time_hour = datetime.now().time().hour
-    if 5 <= curr_time_hour < 12:
-        return MORNING.format(user_name=name)
-    elif 12 <= curr_time_hour < 16:
-        return AFTERNOON.format(user_name=name)
-    elif 16 <= curr_time_hour < 21:
-        return EVENING.format(user_name=name)
-    return NIGHT.format(user_name=name)
+    return random.choice(GREETINGS).format(name=name)
 
 
-def sort_work_updates_by_date(updates_list: List[dict]) -> Dict[Any, Any]:
+def sort_work_updates_by_date(updates_list: list[dict]) -> dict[Any, Any]:
     """
     Utility Function to sort logs by date
     """
