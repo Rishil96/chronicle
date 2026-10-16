@@ -4,8 +4,19 @@
         <meta charset="UTF-8">
         <title>{% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <style>
+            .markdown h1 { font-size: 1.875rem; font-weight: 700; margin-bottom: 0.5rem; }
+            .markdown h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+            .markdown h3 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem; }
+            .markdown ul { list-style-type: disc; padding-left: 1.5rem; }
+            .markdown code { background: #f1f5f9; padding: 0.1rem 0.3rem; border-radius: 0.25rem; }
+        </style>
         <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+        <script>
+            marked.setOptions({ breaks: true });
+        </script>
     </head>
     <body>
         <nav class="bg-sky-500 text-white p-4 flex items-center justify-between">
