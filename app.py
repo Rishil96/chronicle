@@ -1,19 +1,20 @@
-from datetime import date
+from datetime import datetime
 from typing import Annotated
+
 from fastapi import Depends, FastAPI, Request
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from starlette.middleware.sessions import SessionMiddleware
-from src.api import auth_router, work_update_router, topic_router, user_router
+
+from src.api import auth_router, topic_router, user_router, work_update_router
 from src.auth import decode_access_token
-from src.config import settings
+from src.config import IST, settings
 from src.db import get_db
 from src.logger import logger
-from src.templates import templates
 from src.service_layer import get_recent_work_updates_for_user
-from src.utils import greet_user, get_flash
-
+from src.templates import templates
+from src.utils import get_flash, greet_user
 
 # Main app object
 app = FastAPI()
@@ -74,7 +75,7 @@ def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     first_name = user_details.get("first_name", "") if user_details else ""
     greeting = greet_user(first_name)
     # Get today's date
-    today_date = date.today()
+    today_date = datetime.now(tz=IST).date()
     formatted_date = today_date.strftime("%A, %d %B %Y")
     # Get recent daily updates
     recent_work_updates = get_recent_work_updates_for_user(session=db, user_id=request.state.user_id)

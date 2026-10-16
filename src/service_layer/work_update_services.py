@@ -2,10 +2,12 @@
 This module contains all operations to be performed on the Chronicle Daily updates functionality
 """
 from datetime import datetime, timedelta
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from src.config import settings, IST
-from src.db import WorkUpdates, Topics, Users
+
+from src.config import IST, settings
+from src.db import Topics, Users, WorkUpdates
 from src.logger import logger
 
 
@@ -65,7 +67,7 @@ def get_recent_work_updates_for_user(session: Session, user_id: int) -> list[Wor
     Service layer function to get recently made work updates by a user
     """
     from_date = datetime.now(tz=IST) - timedelta(hours=settings.recency_hours)
-    recent_updates = session.execute(select(WorkUpdates).where(WorkUpdates.user_id == user_id).where(WorkUpdates.created_at >= from_date)).scalars().all()
+    recent_updates = session.execute(select(WorkUpdates).where(WorkUpdates.user_id == user_id).where(WorkUpdates.created_at >= from_date).order_by(WorkUpdates.created_at.desc())).scalars().all()
     return list(recent_updates)
 
 

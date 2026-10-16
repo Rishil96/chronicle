@@ -1,12 +1,13 @@
 from typing import Annotated
+
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
-from src.db import get_db
-from src.templates import templates
-from src.service_layer import change_password
-from src.utils import get_flash, set_flash
 
+from src.db import get_db
+from src.service_layer import change_password
+from src.templates import templates
+from src.utils import get_flash, set_flash
 
 # Router object to handle user functionality
 router = APIRouter(prefix="/users", tags=["users"])

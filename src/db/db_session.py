@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from src.config import settings
 from src.db.models import Base
-
 
 # Create Database Engine
 connect_args = {"check_same_thread": False} if settings.db_driver == "sqlite" else {}

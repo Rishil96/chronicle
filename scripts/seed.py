@@ -1,6 +1,7 @@
 import bcrypt
-from src.db import get_db, Users, WorkCategories, Projects
+
 from src.config import settings
+from src.db import Topics, Users, get_db
 
 print(f"Initialized testing environment setup using database from environment variables called: {settings.db_name}")
 
@@ -19,24 +20,22 @@ test_user = Users(
     last_name="User",
     email="test@chronicle.com",
     password_hash=password_hash,
-    is_admin=False
+    is_admin=True
 )
 session.add(test_user)
 
-# Add work categories
-categories = ["R&D", "Meeting", "Bug Fix", "Code Review", "Deployment", "Documentation"]
-for category in categories:
-    session.add(WorkCategories(category_name=category))
+# Add topics
+topics = {
+    "R&D": "Use this to add updates on research work or learnings",
+    "Meeting": "Use this to add meetings not related to a specific project",
+    "Code Review": "Use this to add code review work update for projects not developed by us",
+    "Documentation": "Use ths to add documentation updates for general tasks not specific to any project",
+}
 
-# Add sample projects
-projects = [
-    Projects(project_name="Chronicle", client_name="Client A", description="Work log web application", created_by=test_user_id),
-    Projects(project_name="Internal Tools", client_name="Client B", description="Internal team tools", created_by=test_user_id),
-    Projects(project_name="Client Portal", client_name="Client C", description="Client facing portal", created_by=test_user_id),
-]
-for project in projects:
-    session.add(project)
+for topic_name, description in topics.items():
+    session.add(Topics(topic_name=topic_name, description=description, created_by_id=test_user_id))
 
 session.commit()
 session.close()
+
 print("Testing environment setup completed successfully!")

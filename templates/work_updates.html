@@ -20,11 +20,18 @@
                                     <span class="text-sm text-slate-400 block">{{ update.time_of_creation }}</span>
                                 </div>
                             </div>
-                            <p class="text-slate-700 mt-2 text-sm">{{ update.description }}</p>
+                            <div class="mb-2">
+                                <div class="text-slate-600 mt-2 text-sm markdown" data-markdown data-content="{{ update.description }}"></div>
+                            </div>
                         </li>
                     {% endfor %}
                 </ul>
             {% endfor %}
+            <script>
+                document.querySelectorAll("[data-markdown]").forEach(el => {
+                    el.innerHTML = marked.parse(el.getAttribute("data-content"));
+                });
+            </script>
         {% else %}
             <p class="text-sky-600 italic text-center mt-8 text-lg">No updates yet for this period. Be the first to share what you've been working on!</p>
         {% endif %}
