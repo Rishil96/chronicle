@@ -1,6 +1,8 @@
 from datetime import datetime
-from sqlalchemy import String, DateTime, Boolean, Text, ForeignKey, func
+
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+
 from src.config import IST
 
 
