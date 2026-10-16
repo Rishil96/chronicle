@@ -4,6 +4,7 @@ This module contains all operations to be performed on the Chronicle Daily updat
 from datetime import datetime, timedelta
 
 from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from src.config import IST, settings
@@ -31,7 +32,7 @@ def add_new_topic(session: Session, topic_name: str, description: str, created_b
         )
         session.add(new_topic)
         session.commit()
-    except Exception as e:
+    except SQLAlchemyError as e:
         session.rollback()
         logger.error(f"Failed to add a new topic. Error message: {e}")
 
@@ -48,7 +49,7 @@ def add_work_update(session: Session, user_id: int, topic_id: int, description: 
         )
         session.add(new_work_update)
         session.commit()
-    except Exception as e:
+    except SQLAlchemyError as e:
         session.rollback()
         logger.error(f"Failed to add work update. Error message: {e}")
 
@@ -81,6 +82,6 @@ def get_user_by_email(session: Session, email: str) -> Users | None:
         if user is None:
             logger.error(f"User not found: {email}")
         return user
-    except Exception as e:
+    except SQLAlchemyError as e:
         logger.error(f"Error while fetching user via email: {e}")
         return None
