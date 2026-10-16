@@ -1,12 +1,13 @@
 from typing import Annotated
+
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+
 from src.db import get_db
 from src.logger import logger
 from src.service_layer import add_new_topic
 from src.templates import templates
-
 
 # Router object to handle topics functionality
 router = APIRouter(prefix="/topics", tags=["topics"])

@@ -1,13 +1,14 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
-from typing import Annotated
+
 from src.db import get_db
 from src.logger import logger
-from src.service_layer import get_all_topics, add_work_update, get_work_updates
+from src.service_layer import add_work_update, get_all_topics, get_work_updates
 from src.templates import templates
 from src.utils import sort_work_updates_by_date
-
 
 # Router object to handle work updates functionality
 router = APIRouter(prefix="/work-updates", tags=["work-updates"])

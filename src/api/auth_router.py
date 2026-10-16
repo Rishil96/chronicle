@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+
 from src.auth import create_access_token, verify_password
-from src.db import get_db, Users
+from src.db import Users, get_db
 from src.logger import logger
 from src.service_layer import get_user_by_email
 from src.templates import templates
-from src.utils import set_flash, get_flash
+from src.utils import get_flash, set_flash
 
 # Router object to handle authentication functionality
 router = APIRouter(prefix="/auth", tags=["auth"])
