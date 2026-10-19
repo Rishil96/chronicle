@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from starlette.middleware.sessions import SessionMiddleware
 
-from src.api import auth_router, topic_router, user_router, work_update_router
+from src.api import auth_router, filter_router, topic_router, user_router, work_update_router
 from src.auth import decode_access_token
 from src.config import IST, settings
 from src.db import get_db
@@ -21,9 +21,10 @@ app = FastAPI()
 
 # Add APIRouters
 app.include_router(auth_router)
-app.include_router(work_update_router)
+app.include_router(filter_router)
 app.include_router(topic_router)
 app.include_router(user_router)
+app.include_router(work_update_router)
 
 # Setup templating and static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
