@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Form, Request
 from sqlalchemy.orm import Session
 
 from src.db import get_db
-from src.service_layer import get_filtered_work_updates
+from src.service_layer import get_all_topics, get_all_users, get_filtered_work_updates
 from src.templates import templates
 from src.utils import sort_work_updates_by_date
 
@@ -13,14 +13,17 @@ router = APIRouter(prefix="/filter", tags=["filter"])
 
 
 @router.get("")
-def filter_page(request: Request):
+def filter_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     """
     GET Route to render filter page
     """
+    # Retrieve all users and topics
+    all_users = get_all_users(session=db)
+    all_topics = get_all_topics(session=db)
     return templates.TemplateResponse(
         request=request,
         name="filter_page.html",
-        context={}
+        context={"users": all_users, "topics": all_topics},
     )
 
 @router.post("")
