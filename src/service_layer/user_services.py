@@ -28,3 +28,11 @@ def change_password(user_id: int, current_password: str, new_password: str, sess
     user.password_hash = new_pw_hash
     session.commit()
     return True
+
+
+def get_all_users(session: Session) -> list[Users]:
+    """
+    This function gets all users from the database
+    """
+    all_users = session.execute(select(Users)).scalars().all()
+    return list(all_users)
