@@ -66,5 +66,10 @@
             // Toggle Text content from main button
             dateToggle.textContent = dateToggle.textContent === "Single Date" ? "Date Range" : "Single Date";
         });
+
+        document.addEventListener("htmx:afterSwap", function() {
+            const flash = document.querySelector(".flash-message");
+            if (flash) flash.remove();
+        });
     </script>
 {% endblock %}
