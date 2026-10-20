@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
+from src.config import settings
 from src.db import get_db
 from src.service_layer import get_all_topics, get_all_users, get_filtered_work_updates, get_work_updates
 from src.templates import templates
@@ -54,7 +55,11 @@ def filter_work_updates(
         return templates.TemplateResponse(
             request=request,
             name="_filter_results.html",
-            context={"updates_list": updates_list, "no_filters": True},
+            context={
+                "updates_list": updates_list,
+                "no_filters": True,
+                "message": f"No filters applied — showing last {settings.work_update_history_days} day(s) of updates."
+            },
         )
     # Case 2: Invalid date range - From Date greater than To Date
     if from_date and to_date and from_date > to_date:
@@ -77,5 +82,5 @@ def filter_work_updates(
     return templates.TemplateResponse(
         request=request,
         name="_filter_results.html",
-        context={"updates_list": updates_list, "no_filters": False},
+        context={"updates_list": updates_list, "no_filters": False, "message": ""},
     )
