@@ -6,7 +6,7 @@ from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
 from src.db import get_db
-from src.service_layer import get_all_topics, get_all_users, get_filtered_work_updates
+from src.service_layer import get_all_topics, get_all_users, get_filtered_work_updates, get_work_updates
 from src.templates import templates
 from src.utils import get_flash, set_flash, sort_work_updates_by_date
 
@@ -46,13 +46,23 @@ def filter_work_updates(
     single_date = datetime.strptime(single_date, "%Y-%m-%d").date() if isinstance(single_date, str) else None
     from_date = datetime.strptime(from_date, "%Y-%m-%d").date() if isinstance(from_date, str) else None
     to_date = datetime.strptime(to_date, "%Y-%m-%d").date() if isinstance(to_date, str) else None
-    # From Date greater than To Date
+    # Case 1: No filters applied
+    if not any([user_id, topic_id, single_date, from_date, to_date]):
+        updates_list = get_work_updates(session=db)
+        updates_list = [update.to_dict() for update in updates_list]
+        updates_list = sort_work_updates_by_date(updates_list)
+        return templates.TemplateResponse(
+            request=request,
+            name="_filter_results.html",
+            context={"updates_list": updates_list, "no_filters": True},
+        )
+    # Case 2: Invalid date range - From Date greater than To Date
     if from_date and to_date and from_date > to_date:
         set_flash(request=request, message="'From Date' cannot be after 'To Date'")
         response = Response(status_code=status.HTTP_200_OK)
         response.headers["HX-Redirect"] = "/filter"
         return response
-    # Get filtered updates
+    # Case 3: Get updates for given filters
     updates_list = get_filtered_work_updates(
         session=db,
         user_id=user_id,
@@ -67,5 +77,5 @@ def filter_work_updates(
     return templates.TemplateResponse(
         request=request,
         name="_filter_results.html",
-        context={"updates_list": updates_list},
+        context={"updates_list": updates_list, "no_filters": False},
     )
