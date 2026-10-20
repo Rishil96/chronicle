@@ -7,7 +7,13 @@ from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from starlette.middleware.sessions import SessionMiddleware
 
-from src.api import auth_router, filter_router, topic_router, user_router, work_update_router
+from src.api import (
+    auth_router,
+    filter_router,
+    topic_router,
+    user_router,
+    work_update_router,
+)
 from src.auth import decode_access_token
 from src.config import IST, settings
 from src.db import get_db

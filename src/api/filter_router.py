@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, Request, status
@@ -7,7 +7,12 @@ from sqlalchemy.orm import Session
 
 from src.config import settings
 from src.db import get_db
-from src.service_layer import get_all_topics, get_all_users, get_filtered_work_updates, get_work_updates
+from src.service_layer import (
+    get_all_topics,
+    get_all_users,
+    get_filtered_work_updates,
+    get_work_updates,
+)
 from src.templates import templates
 from src.utils import get_flash, set_flash, sort_work_updates_by_date
 
@@ -44,9 +49,9 @@ def filter_work_updates(
     POST Route to process work update filtering
     """
     # Parse dates if not None
-    single_date = datetime.strptime(single_date, "%Y-%m-%d").date() if isinstance(single_date, str) else None
-    from_date = datetime.strptime(from_date, "%Y-%m-%d").date() if isinstance(from_date, str) else None
-    to_date = datetime.strptime(to_date, "%Y-%m-%d").date() if isinstance(to_date, str) else None
+    single_date = date.fromisoformat(single_date) if single_date else None
+    from_date = date.fromisoformat(from_date) if from_date else None
+    to_date = date.fromisoformat(to_date) if to_date else None
     # Case 1: No filters applied
     if not any([user_id, topic_id, single_date, from_date, to_date]):
         updates_list = get_work_updates(session=db)
