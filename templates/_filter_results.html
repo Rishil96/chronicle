@@ -1,3 +1,8 @@
+{% if no_filters %}
+    <div class="bg-sky-50 border border-sky-200 rounded-lg px-4 py-3 mb-4 text-sky-600 text-sm">
+        {{ message }}
+    </div>
+{% endif %}
 {% if updates_list %}
     {% for date, updates in updates_list.items() %}
         <!-- Add Date Distinction -->
