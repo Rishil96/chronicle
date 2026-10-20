@@ -8,7 +8,7 @@
     <div class="max-w-8xl mx-auto px-10 py-8 grid grid-cols-4 gap-8">
         <!-- Filter Sidebar -->
         <div>
-            <h1 class="text-xl font-bold text-sky-600 mb-6">Filters</h1>
+            <h1 class="text-xl font-bold text-sky-600 mb-6">Filter Work Updates</h1>
             <form hx-post="/filter" hx-target="#filter-results" hx-swap="innerHTML">
                 <div class="mb-4">
                     <label for="users" class="text-sm text-sky-700 font-medium mb-1 block">Select User</label>
@@ -19,7 +19,7 @@
                             {% endfor %}
                     </select>
                 </div>
-                <div class="mb-4">
+                <div class="mb-5">
                     <label for="topics" class="text-sm text-sky-700 font-medium mb-1 block">Select Topic</label>
                     <select name="topic_id" id="topics" class="border border-sky-300 rounded-lg px-3 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm">
                         <option value="">All Topics</option>
@@ -28,7 +28,7 @@
                             {% endfor %}
                     </select>
                 </div>
-                <button type="button" id="date-toggle"class="text-sm border border-sky-500 text-sky-600 bg-sky-50 px-3 py-1.5 rounded-lg font-medium hover:bg-sky-100 cursor-pointer mb-3 w-full">Single Date</button>
+                <button type="button" id="date-toggle" class="text-sm border border-sky-500 text-sky-600 bg-sky-50 px-3 py-1.5 rounded-lg font-medium hover:bg-sky-100 cursor-pointer mb-3 w-full">Single Date</button>
                 <div id="single-date-div">
                     <label for="single-date" class="text-sm text-sky-700 font-medium mb-1 block">Date</label>
                     <input type="date" id="single-date" name="single_date" class="border border-sky-300 rounded-lg px-3 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm">
@@ -43,12 +43,15 @@
                         <input type="date" id="to-date" name="to_date" class="border border-sky-300 rounded-lg px-3 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm">
                     </div>
                 </div>
-                <button type="submit"   class="bg-sky-500 text-white px-3 py-1.5 w-full rounded-lg font-bold hover:bg-sky-600 cursor-pointer mt-4 text-sm">Apply Filters</button>
+                <button type="submit" class="bg-sky-500 text-white px-3 py-1.5 w-full rounded-lg font-bold hover:bg-sky-600 cursor-pointer mt-5 text-sm">Apply Filters</button>
             </form>
         </div>
         <!-- Filter Results -->
-        <div class="col-span-3" id="filter-results">
-            <p class="text-sky-600 italic text-center mt-8 text-lg">Apply filters to see work updates here.</p>
+        <div class="col-span-3">
+            {% include '_flash_message.html' %}
+            <div id="filter-results">
+                <p class="text-sky-600 italic text-center mt-8 text-lg">Apply filters to see work updates here.</p>
+            </div>
         </div>
     </div>
     <script>
