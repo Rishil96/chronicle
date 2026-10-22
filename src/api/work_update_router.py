@@ -10,7 +10,7 @@ from src.db import get_db
 from src.logger import logger
 from src.service_layer import add_work_update, get_all_topics, get_work_updates
 from src.templates import templates
-from src.utils import sort_work_updates_by_date
+from src.utils import set_flash, sort_work_updates_by_date
 
 # Router object to handle work updates functionality
 router = APIRouter(prefix="/work-updates", tags=["work-updates"])
@@ -67,8 +67,21 @@ def new_work_update(request: Request, db: Annotated[Session, Depends(get_db)], t
             }
         )
     # Make database entry
-    add_work_update(session=db, user_id=user_id, topic_id=topic_id, description=description)
-    logger.info(f"New daily update added. User ID: {user_id} | Topic ID: {topic_id}")
+    result, message = add_work_update(session=db, user_id=user_id, topic_id=topic_id, description=description)
+    if result:
+        logger.info(f"New work update added. User ID: {user_id} | Topic ID: {topic_id}")
+        set_flash(
+            request=request,
+            message=message,
+            category="success"
+        )
+    else:
+        logger.error(f"Failed to add new work update. Error: {message}")
+        set_flash(
+            request=request,
+            message=message,
+            category="error"
+        )
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
