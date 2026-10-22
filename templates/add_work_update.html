@@ -6,13 +6,13 @@ Add Daily Update | Chronicle
 
 {% block content %}
     <div class="max-w-4xl mx-auto px-6 py-8">
-        <h1 class="text-3xl font-bold text-sky-600 mb-2">Add Work Update</h1>
+        <h1 class="text-3xl font-bold text-brand mb-2">Add Work Update</h1>
         <p class="text-sm text-slate-400 mb-8">{{ display_date }}</p>
         {% include "_flash_message.html" %}
         <form method="POST" action="{{ url_for('new_work_update') }}">
             <div class="mb-6">
-                <label for="topic" class="text-lg text-sky-700 font-medium mb-1 block">Topic</label>
-                <select name="topic_id" id="topic" class="border border-sky-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-sky-500">
+                <label for="topic" class="text-lg text-brand-dark font-medium mb-1 block">Topic</label>
+                <select name="topic_id" id="topic" class="border border-brand-line rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-brand-accent">
                     {% for topic in topics %}
                         <option value="{{ topic.id }}" {% if topic.id == selected_topic %} selected {% endif %}>{{ topic.topic_name }}</option>
                     {% endfor %}
@@ -20,11 +20,11 @@ Add Daily Update | Chronicle
                 <p id="topic-description" class="text-sm text-slate-500 mt-2 italic"></p>
             </div>
             <div class="mb-6">
-                <label for="description" class="text-lg text-sky-700 font-medium mb-1 block">Description</label>
-                <textarea name="description" id="description" rows="6" class="border border-sky-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-sky-500 resize-y" required>{{ description }}</textarea>
+                <label for="description" class="text-lg text-brand-dark font-medium mb-1 block">Description</label>
+                <textarea name="description" id="description" rows="6" class="border border-brand-line rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-brand-accent resize-y" required>{{ description }}</textarea>
             </div>
             <input type="hidden" name="render_date" value="{{ iso_date }}">
-            <button type="submit" class="bg-sky-500 text-white px-6 py-2 w-full rounded-lg font-medium hover:bg-sky-600 cursor-pointer mt-4">
+            <button type="submit" class="bg-brand text-white px-6 py-2 w-full rounded-lg font-medium hover:bg-brand-dark cursor-pointer mt-4">
                 Submit
             </button>
         </form>
