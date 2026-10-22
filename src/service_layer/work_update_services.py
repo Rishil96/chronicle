@@ -32,11 +32,11 @@ def add_new_topic(session: Session, topic_name: str, description: str, created_b
         )
         session.add(new_topic)
         session.commit()
-        return True, "Successfully added new topic"
+        return True, "Topic added successfully."
     except IntegrityError as e:
         session.rollback()
         logger.error(f"Topic already exists. Error: {e}")
-        return False, "Topic already exists"
+        return False, "Topic already exists."
     except SQLAlchemyError as e:
         session.rollback()
         logger.error(f"Failed to add a new topic. Error message: {e}")
