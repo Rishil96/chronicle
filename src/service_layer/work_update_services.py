@@ -42,7 +42,8 @@ def add_new_topic(session: Session, topic_name: str, description: str, created_b
         logger.error(f"Failed to add a new topic. Error message: {e}")
         return False, "Failed to add new topic"
 
-def add_work_update(session: Session, user_id: int, topic_id: int, description: str) -> None:
+
+def add_work_update(session: Session, user_id: int, topic_id: int, description: str) -> tuple[bool, str]:
     """
     Service function which accepts work update data and makes an entry into the database
     """
@@ -54,9 +55,11 @@ def add_work_update(session: Session, user_id: int, topic_id: int, description: 
         )
         session.add(new_work_update)
         session.commit()
+        return True, "Work Update added successfully."
     except SQLAlchemyError as e:
         session.rollback()
         logger.error(f"Failed to add work update. Error message: {e}")
+        return False, "Failed to add new work update."
 
 
 def get_work_updates(session: Session) -> list[WorkUpdates]:
