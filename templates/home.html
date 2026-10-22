@@ -6,20 +6,20 @@
 
 {% block content %}
     <div class="max-w-4xl mx-auto px-6 py-8">
-        <h1 class="text-3xl font-bold text-sky-600 mb-2"> {{ greeting }} </h1>
-        <p class="text-lg text-sky-600 mb-6"> {{ today_date }} </p>
+        <h1 class="text-3xl font-bold text-brand mb-2"> {{ greeting }} </h1>
+        <p class="text-lg text-brand mb-6"> {{ today_date }} </p>
         {% include "_flash_message.html" %}
         <div class="flex gap-4 mb-20 justify-center">
-            <a href="{{ url_for('work_updates_page') }}" class="bg-sky-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-sky-600 cursor-pointer">Add Work Update</a>
-            <a href="{{ url_for('add_topic_page') }}" class="bg-sky-500 text-white px-6 py-3 rounded-lg font-medium hover:bg-sky-600 cursor-pointer">Add New Topic</a>
+            <a href="{{ url_for('work_updates_page') }}" class="bg-brand text-white px-6 py-3 rounded-lg font-medium hover:bg-brand-dark cursor-pointer">Add Work Update</a>
+            <a href="{{ url_for('add_topic_page') }}" class="bg-brand text-white px-6 py-3 rounded-lg font-medium hover:bg-brand-dark cursor-pointer">Add New Topic</a>
         </div>
         <div class="mb-8">
             {% if recent_work_updates %}
                 <ul class="space-y-3 mb-4">
                     {% for update in recent_work_updates %}
-                        <li class="bg-white rounded-lg shadow-sm border border-sky-100 p-4">
+                        <li class="bg-white rounded-lg shadow-sm border border-brand-soft p-4">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-lg text-sky-500 font-medium tracking-wide">{{ update.topic }}</span>
+                                <span class="text-lg text-brand-accent font-medium tracking-wide">{{ update.topic }}</span>
                                 <div class="text-right">
                                     <span class="text-sm text-slate-400 block">{{ update.time_of_creation }}</span>
                                     <span class="text-xs text-slate-400 block">{{ update.date_of_creation.strftime("%d %B, %Y") }}</span>
@@ -37,7 +37,7 @@
                     });
                 </script>
             {% else %}
-                <p class="text-sky-600 italic text-center mt-8 text-lg">Nothing logged recently — get started by adding a work update!</p>
+                <p class="text-brand italic text-center mt-8 text-lg">Nothing logged recently — get started by adding a work update!</p>
             {% endif %}
         </div>
     </div>

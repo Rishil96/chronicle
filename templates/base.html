@@ -17,21 +17,22 @@
         <script>
             marked.setOptions({ breaks: true });
         </script>
+        {% include "_theme.html" %}
     </head>
     <body>
-        <nav class="bg-sky-500 text-white p-4 flex items-center justify-between">
+        <nav class="bg-brand text-white p-4 flex items-center justify-between">
             <span class="font-bold text-3xl leading-none">
                 <a href="{{ url_for('home_page') }}">Chronicle</a>
             </span>
             <div class="flex items-center gap-6 pr-4">
-                <a href="{{ url_for('home_page') }}" class="font-medium text-lg hover:text-sky-100">Home</a>
-                <a href="{{ url_for('all_work_updates') }}" class="font-medium text-lg hover:text-sky-100">Updates</a>
-                <a href="{{ url_for('filter_page') }}" class="font-medium text-lg hover:text-sky-100">Filter</a>
+                <a href="{{ url_for('home_page') }}" class="font-medium text-lg hover:text-brand-line">Home</a>
+                <a href="{{ url_for('all_work_updates') }}" class="font-medium text-lg hover:text-brand-line">Updates</a>
+                <a href="{{ url_for('filter_page') }}" class="font-medium text-lg hover:text-brand-line">Filter</a>
                 <div class="relative group">
-                    <button class="flex h-9 w-9 items-center justify-center rounded-full bg-white text-sky-600 font-bold leading-none cursor-pointer">{{ request.state.initials }}</button>
+                    <button class="flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand font-bold leading-none cursor-pointer">{{ request.state.initials }}</button>
                     <div class="absolute right-0 hidden w-48 rounded-lg bg-white pt-2 shadow-lg group-hover:block">
-                        <a href="{{ url_for('change_password_page') }}" class="block rounded-t-lg px-4 py-2 text-slate-700 hover:bg-sky-50">Change Password</a>
-                        <a href="{{ url_for('logout') }}" class=" block rounded-b-lg px-4 py-2 text-slate-700 hover:bg-sky-50">Logout</a>
+                        <a href="{{ url_for('change_password_page') }}" class="block rounded-t-lg px-4 py-2 text-slate-700 hover:bg-brand-soft">Change Password</a>
+                        <a href="{{ url_for('logout') }}" class=" block rounded-b-lg px-4 py-2 text-slate-700 hover:bg-brand-soft">Logout</a>
                     </div>
                 </div>
             </div>
