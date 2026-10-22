@@ -1,9 +1,11 @@
+from datetime import datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Form, Request, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
+from src.config import IST
 from src.db import get_db
 from src.logger import logger
 from src.service_layer import add_work_update, get_all_topics, get_work_updates
@@ -17,13 +19,20 @@ router = APIRouter(prefix="/work-updates", tags=["work-updates"])
 @router.get("/new")
 def work_updates_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     """
-    Page to add a new daily update
+    Page to add a new work update
     """
+    # Get today's date
+    today_date = datetime.now(tz=IST).date()
+    # Get all topics
     topics = get_all_topics(db)
     return templates.TemplateResponse(
         request=request,
         name="add_work_update.html",
-        context={"topics": topics}
+        context={
+            "topics": topics,
+            "display_date": today_date.strftime("%A, %d %B %Y"),
+            "iso_date": today_date.isoformat(),
+        }
     )
 
 @router.post("")
