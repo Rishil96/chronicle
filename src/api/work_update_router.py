@@ -36,12 +36,36 @@ def work_updates_page(request: Request, db: Annotated[Session, Depends(get_db)])
     )
 
 @router.post("")
-def new_work_update(request: Request, db: Annotated[Session, Depends(get_db)], topic_id: int = Form(), description: str = Form()):
+def new_work_update(request: Request, db: Annotated[Session, Depends(get_db)], topic_id: int = Form(), description: str = Form(), render_date: str = Form()):
     """
     Route to add a new work update via HTML form
     """
     # Read user ID from cookie
     user_id = request.state.user_id
+    # Date mismatch scenario
+    today_date = datetime.now(tz=IST).date()
+    if today_date.isoformat() != render_date:
+        logger.warning(f"Date mismatch occurred while adding new work update for user with ID {user_id}. Reloading page.")
+        # Get today's date in required formats
+        display_date = today_date.strftime("%A, %d %B %Y")
+        iso_date = today_date.isoformat()
+        # Get all topics
+        topics = get_all_topics(db)
+        return templates.TemplateResponse(
+            request=request,
+            name="add_work_update.html",
+            context={
+                "topics": topics,
+                "display_date": display_date,
+                "iso_date": iso_date,
+                "description": description,
+                "selected_topic": topic_id,
+                "flash": {
+                    "message": "Date mismatch. Your update is kept below, so please submit again.",
+                    "category": "error"
+                }
+            }
+        )
     # Make database entry
     add_work_update(session=db, user_id=user_id, topic_id=topic_id, description=description)
     logger.info(f"New daily update added. User ID: {user_id} | Topic ID: {topic_id}")
