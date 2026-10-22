@@ -6,17 +6,17 @@
 
 {% block content %}
     <div class="max-w-4xl mx-auto px-6 py-8">
-        <h1 class="text-3xl font-bold text-sky-600 mb-8">Work Updates</h1>
+        <h1 class="text-3xl font-bold text-brand mb-8">Work Updates</h1>
         {% if past_updates %}
             {% for date, updates in past_updates.items() %}
-                <h2 class="text-lg text-sky-600 mb-6 py-3">{{ date.strftime('%B %d, %Y') }}</h2>
+                <h2 class="text-lg text-brand mb-6 py-3">{{ date.strftime('%B %d, %Y') }}</h2>
                 <ul class="space-y-3 mb-4">
                     {% for update in updates %}
-                        <li class="bg-white rounded-lg shadow-sm border border-sky-100 p-4">
+                        <li class="bg-white rounded-lg shadow-sm border border-brand-soft p-4">
                             <div class="flex items-start justify-between mb-2">
-                                <span class="text-sky-600 font-semibold tracking-wide text-lg">{{ update.topic }}</span>
+                                <span class="text-brand font-semibold tracking-wide text-lg">{{ update.topic }}</span>
                                 <div class="text-right">
-                                    <span class="text-md font-medium text-sky-700 block">{{ update.user_name }}</span>
+                                    <span class="text-md font-medium text-brand-dark block">{{ update.user_name }}</span>
                                     <span class="text-sm text-slate-400 block">{{ update.time_of_creation }}</span>
                                 </div>
                             </div>
@@ -33,7 +33,7 @@
                 });
             </script>
         {% else %}
-            <p class="text-sky-600 italic text-center mt-8 text-lg">No updates yet for this period. Be the first to share what you've been working on!</p>
+            <p class="text-brand italic text-center mt-8 text-lg">No updates yet for this period. Be the first to share what you've been working on!</p>
         {% endif %}
     </div>
 {% endblock %}
