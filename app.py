@@ -20,7 +20,7 @@ from src.db import get_db
 from src.logger import logger
 from src.service_layer import get_recent_work_updates_for_user
 from src.templates import templates
-from src.utils import get_flash, greet_user
+from src.utils import get_flash, greet_user, set_flash
 
 # Main app object
 app = FastAPI()
@@ -36,8 +36,6 @@ app.include_router(work_update_router)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Add app middlewares
-app.add_middleware(SessionMiddleware, secret_key=settings.jwt_secret_key)   # noqa
-
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
     """
@@ -58,6 +56,11 @@ async def auth_middleware(request: Request, call_next):
     user_details = decode_access_token(access_token)
     if user_details is None:
         logger.error("Invalid or expired access token provided. Redirecting to login page.")
+        set_flash(
+            request=request,
+            message="Your session has expired. Please login again.",
+            category="error"
+        )
         return RedirectResponse("/auth/login", status_code=status.HTTP_303_SEE_OTHER)
     # Valid access token scenario
     # Add user initials in request state
@@ -69,6 +72,7 @@ async def auth_middleware(request: Request, call_next):
     response = await call_next(request)
     return response
 
+app.add_middleware(SessionMiddleware, secret_key=settings.jwt_secret_key)   # noqa
 
 @app.get("/")
 @app.get("/home")
