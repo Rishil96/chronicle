@@ -72,7 +72,13 @@ def filter_work_updates(
         response = Response(status_code=status.HTTP_200_OK)
         response.headers["HX-Redirect"] = "/filter"
         return response
-    # Case 3: Get updates for given filters
+    # Case 3: Incomplete date range
+    if bool(from_date) != bool(to_date):
+        set_flash(request=request, message="Invalid date range. Please fill both 'From Date' and 'To Date' or leave both empty.")
+        response = Response(status_code=status.HTTP_200_OK)
+        response.headers["HX-Redirect"] = "/filter"
+        return response
+    # Case 4: Get updates for given filters
     updates_list = get_filtered_work_updates(
         session=db,
         user_id=user_id,
