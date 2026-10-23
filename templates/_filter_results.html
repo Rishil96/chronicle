@@ -6,7 +6,7 @@
 {% if updates_list %}
     {% for date, updates in updates_list.items() %}
         <!-- Add Date Distinction -->
-        <h2 class="text-lg text-brand mb-6 py-3">{{ date.strftime('%B %d, %Y') }}</h2>
+        <h2 class="text-lg text-brand border-b border-brand-line py-2 mb-4">{{ date.strftime('%B %d, %Y') }}</h2>
         <ul class="space-y-3 mb-4">
          <!-- Work update loop for above date-->
             {% for update in updates %}
