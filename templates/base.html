@@ -1,23 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-</head>
-<body>
-  <nav class="bg-emerald-500 text-white p-4 flex items-center justify-between">
-      <span class="font-bold text-3xl">Chronicle</span>
-      <div class="flex gap-6 pr-4">
-          <a href="{{ url_for('home_page') }}" class="font-medium text-lg hover:text-emerald-100">Home</a>
-          <a href="{{ url_for('history_page') }}" class="font-medium text-lg hover:text-emerald-100">History</a>
-          <a href="{{ url_for('filter_page') }}" class="font-medium text-lg hover:text-emerald-100">Filter</a>
-      </div>
-  </nav>
-  <div>
-    {% block content %}{% endblock %}
-  </div>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <style>
+            .markdown h1 { font-size: 1.25rem; font-weight: 700; }
+            .markdown h2 { font-size: 1.125rem; font-weight: 600; }
+            .markdown h3 { font-size: 1rem; font-weight: 600; }
+            .markdown ul { list-style-type: disc; padding-left: 1.5rem; }
+            .markdown code { background: #f1f5f9; padding: 0.1rem 0.3rem; border-radius: 0.25rem; }
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js" integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+        <script>
+            marked.setOptions({ breaks: true });
+        </script>
+        {% include "_theme.html" %}
+    </head>
+    <body>
+        <nav class="bg-brand text-white p-4 flex items-center justify-between">
+            <span class="font-bold text-3xl leading-none">
+                <a href="{{ url_for('home_page') }}">Chronicle</a>
+            </span>
+            <div class="flex items-center gap-6 pr-4">
+                <a href="{{ url_for('home_page') }}" class="font-medium text-lg hover:text-brand-line">Home</a>
+                <a href="{{ url_for('all_work_updates') }}" class="font-medium text-lg hover:text-brand-line">Updates</a>
+                <a href="{{ url_for('filter_page') }}" class="font-medium text-lg hover:text-brand-line">Filter</a>
+                <div class="relative group">
+                    <button class="flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand font-bold leading-none cursor-pointer">{{ request.state.initials }}</button>
+                    <div class="absolute right-0 hidden w-48 rounded-lg bg-white pt-2 shadow-lg group-hover:block">
+                        <a href="{{ url_for('change_password_page') }}" class="block rounded-t-lg px-4 py-2 text-slate-700 hover:bg-brand-soft">Change Password</a>
+                        <a href="{{ url_for('logout') }}" class=" block rounded-b-lg px-4 py-2 text-slate-700 hover:bg-brand-soft">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="bg-slate-50 min-h-screen">
+        {% block content %}{% endblock %}
+        </div>
+    </body>
 </html>

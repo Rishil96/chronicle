@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Filter Work Updates | Chronicle
+{% endblock %}
+
+{% block content %}
+    <div class="max-w-8xl mx-auto px-10 py-8 grid grid-cols-4 gap-8">
+        <!-- Filter Sidebar -->
+        <div>
+            <h1 class="text-xl font-bold text-brand mb-6">Filter Work Updates</h1>
+            <form hx-post="/filter" hx-target="#filter-results" hx-swap="innerHTML">
+                <div class="mb-4">
+                    <label for="users" class="text-sm text-brand-dark font-medium mb-1 block">Select User</label>
+                    <select name="user_id" id="users" class="border border-brand-line rounded-lg px-3 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-brand-accent text-sm">
+                        <option value="">All Users</option>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.first_name }} {{ user.last_name }}</option>
+                            {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-5">
+                    <label for="topics" class="text-sm text-brand-dark font-medium mb-1 block">Select Topic</label>
+                    <select name="topic_id" id="topics" class="border border-brand-line rounded-lg px-3 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-brand-accent text-sm">
+                        <option value="">All Topics</option>
+                            {% for topic in topics %}
+                                <option value="{{ topic.id }}">{{ topic.topic_name }}</option>
+                            {% endfor %}
+                    </select>
+                </div>
+                <button type="button" id="date-toggle" class="text-sm border border-brand text-brand bg-brand-soft px-3 py-1.5 rounded-lg font-medium hover:bg-brand-line cursor-pointer mb-3 w-full">Single Date</button>
+                <div id="single-date-div">
+                    <label for="single-date" class="text-sm text-brand-dark font-medium mb-1 block">Date</label>
+                    <input type="date" id="single-date" name="single_date" class="border border-brand-line rounded-lg px-3 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-brand-accent text-sm">
+                </div>
+                <div id="range-date-div" class="hidden">
+                    <div class="mb-3">
+                        <label for="from-date" class="text-sm text-brand-dark font-medium mb-1 block">From Date</label>
+                        <input type="date" id="from-date" name="from_date" class="border border-brand-line rounded-lg px-3 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-brand-accent text-sm">
+                    </div>
+                    <div class="mb-3">
+                        <label for="to-date" class="text-sm text-brand-dark font-medium mb-1 block">To Date</label>
+                        <input type="date" id="to-date" name="to_date" class="border border-brand-line rounded-lg px-3 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-brand-accent text-sm">
+                    </div>
+                </div>
+                <button type="submit" class="bg-brand text-white px-3 py-1.5 w-full rounded-lg font-bold hover:bg-brand-dark cursor-pointer mt-5 text-sm">Apply Filters</button>
+            </form>
+        </div>
+        <!-- Filter Results -->
+        <div class="col-span-3">
+            {% include '_flash_message.html' %}
+            <div id="filter-results">
+                <p class="text-brand italic text-center mt-8 text-lg">Apply filters to see work updates here.</p>
+            </div>
+        </div>
+    </div>
+    <script>
+        const dateToggle = document.getElementById("date-toggle");
+        dateToggle.addEventListener("click", () => {
+            // Get date filter divs
+            const singleDateDiv = document.getElementById("single-date-div");
+            const rangeDateDiv = document.getElementById("range-date-div");
+            // Toggle hidden class from both divs
+            singleDateDiv.classList.toggle("hidden");
+            rangeDateDiv.classList.toggle("hidden");
+            // Toggle Text content from main button
+            dateToggle.textContent = dateToggle.textContent === "Single Date" ? "Date Range" : "Single Date";
+        });
+
+        document.addEventListener("htmx:afterSwap", function() {
+            const flash = document.querySelector(".flash-message");
+            if (flash) flash.remove();
+        });
+    </script>
+{% endblock %}
