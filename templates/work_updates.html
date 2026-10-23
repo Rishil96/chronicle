@@ -9,7 +9,7 @@
         <h1 class="text-3xl font-bold text-brand mb-8">Work Updates</h1>
         {% if past_updates %}
             {% for date, updates in past_updates.items() %}
-                <h2 class="text-lg text-brand mb-6 py-3">{{ date.strftime('%B %d, %Y') }}</h2>
+                <h2 class="text-lg text-brand border-b border-brand-line py-2 mb-4">{{ date.strftime('%B %d, %Y') }}</h2>
                 <ul class="space-y-3 mb-4">
                     {% for update in updates %}
                         <li class="bg-white rounded-lg shadow-sm border border-brand-soft p-4">
