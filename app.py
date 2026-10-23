@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, Request, status
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
 from starlette.middleware.sessions import SessionMiddleware
@@ -35,6 +35,19 @@ app.include_router(work_update_router)
 # Setup templating and static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+
+# Helper function to redirect HTMX requests
+def redirect_to_login(is_htmx: bool) -> Response | RedirectResponse:
+    """
+    Helper function to redirect to login page in case of HTMX request failure
+    """
+    if is_htmx:
+        response = Response(status_code=status.HTTP_200_OK)
+        response.headers["HX-Redirect"] = "/auth/login"
+        return response
+    return RedirectResponse("/auth/login", status_code=status.HTTP_303_SEE_OTHER)
+
+
 # Add app middlewares
 @app.middleware("http")
 async def auth_middleware(request: Request, call_next):
@@ -48,10 +61,12 @@ async def auth_middleware(request: Request, call_next):
         return response
     # Retrieve access token from cookies
     access_token = request.cookies.get("access_token")
+    # Check if request is via HTMX
+    is_htmx = bool(request.headers.get("HX-Request"))
     # Missing access token scenario
     if access_token is None:
         logger.error("No access token provided. Redirecting to login page.")
-        return RedirectResponse("/auth/login", status_code=status.HTTP_303_SEE_OTHER)
+        return redirect_to_login(is_htmx)
     # Invalid/Expired access token scenario
     user_details = decode_access_token(access_token)
     if user_details is None:
@@ -61,7 +76,7 @@ async def auth_middleware(request: Request, call_next):
             message="Your session has expired. Please login again.",
             category="error"
         )
-        return RedirectResponse("/auth/login", status_code=status.HTTP_303_SEE_OTHER)
+        return redirect_to_login(is_htmx)
     # Valid access token scenario
     # Add user initials in request state
     initials = f"{user_details.get('first_name', 'U')[0].upper()}{user_details.get('last_name', 'U')[0].upper()}"
@@ -72,7 +87,9 @@ async def auth_middleware(request: Request, call_next):
     response = await call_next(request)
     return response
 
+
 app.add_middleware(SessionMiddleware, secret_key=settings.jwt_secret_key)   # noqa
+
 
 @app.get("/")
 @app.get("/home")
