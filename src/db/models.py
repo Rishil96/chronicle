@@ -3,6 +3,8 @@ from datetime import datetime
 from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
+from src.config import IST
+
 
 class Base(DeclarativeBase):
     pass
@@ -44,6 +46,7 @@ class WorkUpdates(Base):
     topic: Mapped[Topics] = relationship("Topics", back_populates="work_updates")
 
     def to_dict(self):
+        ist_timestamp = self.created_at.astimezone(tz=IST)
         return {
             "id": self.id,
             "topic": self.topic.topic_name,
@@ -52,6 +55,6 @@ class WorkUpdates(Base):
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "user_name": f"{self.user.first_name} {self.user.last_name}",
-            "date_of_creation": self.created_at.date(),
-            "time_of_creation": self.updated_at.time().strftime("%I:%M %p") if self.updated_at else self.created_at.time().strftime("%I:%M %p"),
+            "date_of_creation": ist_timestamp.date(),
+            "time_of_creation": ist_timestamp.time().strftime("%I:%M %p"),
         }
