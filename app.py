@@ -1,167 +1,123 @@
-import logging
-import os
-from datetime import date, timedelta
-from dotenv import load_dotenv
-from fastapi import FastAPI, Request, Form
+from datetime import datetime
+from typing import Annotated
+
+from fastapi import Depends, FastAPI, Request, status
+from fastapi.responses import RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from src.db import DatabaseSession
-from src.logger import setup_logger
-from src.service_layer import add_log, get_logs, delete_log, get_log_by_id, update_log
-from src.utils import greet_user, get_today_logs, sort_logs_by_date
+from sqlalchemy.orm import Session
+from starlette.middleware.sessions import SessionMiddleware
 
-# Load environment variables
-load_dotenv(os.getenv("CHRONICLE_CONFIG", ".env"))
+from src.api import (
+    auth_router,
+    filter_router,
+    topic_router,
+    user_router,
+    work_update_router,
+)
+from src.auth import decode_access_token
+from src.config import IST, settings
+from src.db import get_db
+from src.logger import logger
+from src.service_layer import get_recent_work_updates_for_user
+from src.templates import templates
+from src.utils import get_flash, greet_user, set_flash
 
-# Logger Setup
-setup_logger()
-logger = logging.getLogger("chronicle")
-
-# Database session setup
-db = DatabaseSession()
-
+# Main app object
 app = FastAPI()
+
+# Add APIRouters
+app.include_router(auth_router)
+app.include_router(filter_router)
+app.include_router(topic_router)
+app.include_router(user_router)
+app.include_router(work_update_router)
+
 # Setup templating and static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+
+
+# Helper function to redirect HTMX requests
+def redirect_to_login(is_htmx: bool) -> Response | RedirectResponse:
+    """
+    Helper function to redirect to login page in case of HTMX request failure
+    """
+    if is_htmx:
+        response = Response(status_code=status.HTTP_200_OK)
+        response.headers["HX-Redirect"] = "/auth/login"
+        return response
+    return RedirectResponse("/auth/login", status_code=status.HTTP_303_SEE_OTHER)
+
+
+# Add app middlewares
+@app.middleware("http")
+async def auth_middleware(request: Request, call_next):
+    """
+    Middleware to handle authentication
+    """
+    # Allow white listed routes to pass through
+    white_listed_routes = ["/auth/login", "/static"]
+    if any(request.url.path.startswith(route) for route in white_listed_routes):
+        response = await call_next(request)
+        return response
+    # Retrieve access token from cookies
+    access_token = request.cookies.get("access_token")
+    # Check if request is via HTMX
+    is_htmx = bool(request.headers.get("HX-Request"))
+    # Missing access token scenario
+    if access_token is None:
+        logger.error("No access token provided. Redirecting to login page.")
+        return redirect_to_login(is_htmx)
+    # Invalid/Expired access token scenario
+    user_details = decode_access_token(access_token)
+    if user_details is None:
+        logger.error("Invalid or expired access token provided. Redirecting to login page.")
+        set_flash(
+            request=request,
+            message="Your session has expired. Please login again.",
+            category="error"
+        )
+        return redirect_to_login(is_htmx)
+    # Valid access token scenario
+    # Add user initials in request state
+    initials = f"{user_details.get('first_name', 'U')[0].upper()}{user_details.get('last_name', 'U')[0].upper()}"
+    request.state.initials = initials
+    # Add user ID in request state
+    request.state.user_id = user_details.get("user_id", -1)
+    # Create response object and return it
+    response = await call_next(request)
+    return response
+
+
+app.add_middleware(SessionMiddleware, secret_key=settings.jwt_secret_key)   # noqa
 
 
 @app.get("/")
-def home_page(request: Request):
+@app.get("/home")
+def home_page(request: Request, db: Annotated[Session, Depends(get_db)]):
     """
-    Home page
+    Home page after user is successfully authenticated
     """
-    greeting = greet_user()
-    today_date = date.today()
+    # Retrieve access token from cookies to get user details
+    access_token = request.cookies.get("access_token", "")
+    user_details = decode_access_token(access_token)
+    first_name = user_details.get("first_name", "") if user_details else ""
+    greeting = greet_user(first_name)
+    # Get today's date
+    today_date = datetime.now(tz=IST).date()
     formatted_date = today_date.strftime("%A, %d %B %Y")
-    with db.get_session() as session:
-        today_log_list = get_today_logs(session=session)
+    # Get recent daily updates
+    recent_work_updates = get_recent_work_updates_for_user(session=db, user_id=request.state.user_id)
+    recent_work_updates = [update.to_dict() for update in recent_work_updates]
+    # Get flash messages
+    flash = get_flash(request=request)
     return templates.TemplateResponse(
         request=request,
         name="home.html",
-        context={"greeting": greeting, "today_date": formatted_date, "logs": today_log_list}
-    )
-
-
-@app.get("/history")
-def history_page(request: Request):
-    """
-    History page
-    """
-    history_days = int(os.getenv("HISTORY_DAYS", 30))
-    to_date = date.today()
-    from_date = to_date - timedelta(days=history_days)
-    with db.get_session() as session:
-        history_log_list = get_logs(session=session, from_date=from_date, to_date=to_date)
-        history_log_list = [log.to_dict() for log in history_log_list]
-    # Group logs by date
-    history_logs_by_date = sort_logs_by_date(logs_list=history_log_list)
-    return templates.TemplateResponse(
-        request=request,
-        name="history.html",
-        context={"logs_by_date": history_logs_by_date}
-    )
-
-
-@app.get("/filter")
-def filter_page(request: Request):
-    return templates.TemplateResponse(
-        request=request,
-        name="filter.html",
-        context={}
-    )
-
-
-@app.post("/logs")
-def add_logs(request: Request, log_entry: str = Form(...)):
-    """
-    Route to add a log entry via HTMX from Home route
-    """
-    with db.get_session() as session:
-        add_log(session=session, log_entry=log_entry)
-        today_log_list = get_today_logs(session=session)
-    return templates.TemplateResponse(
-        request=request,
-        name="_logs_list.html",
-        context={"logs": today_log_list}
-    )
-
-
-@app.delete("/logs/{log_id}")
-def delete_logs(request: Request, log_id: int):
-    """
-    Route to delete a log entry via log ID
-    """
-    with db.get_session() as session:
-        delete_log(session=session, log_id=log_id)
-        today_log_list = get_today_logs(session=session)
-    return templates.TemplateResponse(
-        request=request,
-        name="_logs_list.html",
-        context={"logs": today_log_list}
-    )
-
-
-@app.get("/logs/{log_id}/edit")
-def edit_logs(request: Request, log_id: int):
-    """
-    Route to edit a log entry via log ID
-    """
-    with db.get_session() as session:
-        log_to_edit = get_log_by_id(session=session, log_id=log_id)
-    return templates.TemplateResponse(
-        request=request,
-        name="_log_edit_form.html",
-        context={"log": log_to_edit}
-    )
-
-
-@app.put("/logs/{log_id}")
-def update_logs(request: Request, log_id: int, log_entry: str = Form(...)):
-    """
-    Route to update a log entry via log ID
-    """
-    with db.get_session() as session:
-        update_log(session=session, log_id=log_id, updated_log_entry=log_entry)
-        today_log_list = get_today_logs(session=session)
-    return templates.TemplateResponse(
-        request=request,
-        name="_logs_list.html",
-        context={"logs": today_log_list}
-    )
-
-
-@app.get("/logs/{log_id}/cancel")
-def cancel_log_update(request: Request, log_id: int):
-    """
-    Route to cancel a log entry via log ID and return partial to recreate original log list item
-    """
-    with db.get_session() as session:
-        log = get_log_by_id(session=session, log_id=log_id)
-    return templates.TemplateResponse(
-        request=request,
-        name="_log_item.html",
-        context={"log": log}
-    )
-
-
-@app.post("/filter")
-def filter_logs(request: Request, single_date: date | None = Form(None), from_date: date | None = Form(None), to_date: date | None = Form(None)):
-    """
-    Route to filter logs via date range and return partial HTML
-    """
-    with db.get_session() as session:
-        if single_date:
-            logs = get_logs(session=session, single_date=single_date)
-        else:
-            logs = get_logs(session=session, from_date=from_date, to_date=to_date)
-        logs = [log.to_dict() for log in logs]
-
-    # Group logs by date
-    filtered_logs_by_date = sort_logs_by_date(logs_list=logs)
-
-    return templates.TemplateResponse(
-        request=request,
-        name="_filter_results.html",
-        context={"logs_by_date": filtered_logs_by_date}
+        context={
+            "greeting": greeting,
+            "today_date": formatted_date,
+            "name": first_name,
+            "recent_work_updates": recent_work_updates,
+            "flash": flash
+        }
     )

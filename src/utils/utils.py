@@ -1,66 +1,52 @@
-import os
-from typing import List, Dict, Any
-from datetime import datetime, date
-from sqlalchemy.orm import Session
-from src.service_layer import get_logs
+import random
+from typing import Any
 
+from fastapi import Request
 
 # Greeting constants
-MORNING = "Good Morning, {user_name}!"
-AFTERNOON = "Good Afternoon, {user_name}!"
-EVENING = "Good Evening, {user_name}!"
-NIGHT = "GO TO SLEEP, {user_name}!"
+GREETINGS = [
+    "Hello, {name}!",
+    "Welcome back, {name}!",
+    "Good to see you, {name}.",
+    "Hi {name}!",
+    "Hey {name}!",
+]
 
 
-def greet_user():
+def greet_user(name):
     """
     Utility function to greet user
     """
-    user_name = os.getenv("USER_NAME")
-    curr_time_hour = datetime.now().time().hour
-    if 5 <= curr_time_hour < 12:
-        return MORNING.format(user_name=user_name)
-    elif 12 <= curr_time_hour < 16:
-        return AFTERNOON.format(user_name=user_name)
-    elif 16 <= curr_time_hour < 21:
-        return EVENING.format(user_name=user_name)
-    return NIGHT.format(user_name=user_name)
+    return random.choice(GREETINGS).format(name=name)
 
 
-def get_today_logs(session: Session) -> List[dict]:
-    today_date = date.today()
-    today_log_list = get_logs(session=session, single_date=today_date)
-    today_log_list = [log.to_dict() for log in today_log_list]
-    return today_log_list
-
-
-def sort_logs_by_date(logs_list: List[dict]) -> Dict[Any, Any]:
+def sort_work_updates_by_date(updates_list: list[dict]) -> dict[Any, Any]:
     """
     Utility Function to sort logs by date
     """
-    logs_by_date = {}
-    for log in logs_list:
+    work_updates_by_date = {}
+    for log in updates_list:
         log_date = log["date_of_creation"]
-        if log_date not in logs_by_date:
-            logs_by_date[log_date] = []
-        logs_by_date[log_date].append(log)
+        if log_date not in work_updates_by_date:
+            work_updates_by_date[log_date] = []
+        work_updates_by_date[log_date].append(log)
     # Sort history dict by date in descending order
-    logs_by_date = dict(sorted(logs_by_date.items(), reverse=True))
-    return logs_by_date
+    work_updates_by_date = dict(sorted(work_updates_by_date.items(), reverse=True))
+    return work_updates_by_date
 
 
-def print_logs(log_date: date, logs_list: List[dict]):
+def set_flash(request: Request, message: str, category: str = "error") -> None:
     """
-    Pretty prints logs for a single date
+    Utility Function to set flash message
     """
-    print(f"\nDate: {log_date}")
-    for log in logs_list:
-        print(f"{log.get('id')} | {log.get('time_of_creation')} | {log.get('entry')}")
+    request.session["flash"] = {
+        "message": message,
+        "category": category
+    }
 
 
-def print_logs_by_date(logs_by_date: dict):
+def get_flash(request: Request) -> dict | None:
     """
-    Pretty prints logs for multiple dates
+    Utility Function to get flash message
     """
-    for log_date, log_list in logs_by_date.items():
-        print_logs(log_date=log_date, logs_list=log_list)
+    return request.session.pop("flash", None)
