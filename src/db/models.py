@@ -40,12 +40,13 @@ class WorkUpdates(Base):
     topic_id: Mapped[int] = mapped_column(ForeignKey('topics.id'), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), nullable=False)
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(tz=IST))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     user: Mapped[Users] = relationship(Users, back_populates="work_updates")
     topic: Mapped[Topics] = relationship("Topics", back_populates="work_updates")
 
     def to_dict(self):
+        ist_timestamp = self.created_at.astimezone(tz=IST)
         return {
             "id": self.id,
             "topic": self.topic.topic_name,
@@ -54,6 +55,6 @@ class WorkUpdates(Base):
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "user_name": f"{self.user.first_name} {self.user.last_name}",
-            "date_of_creation": self.created_at.date(),
-            "time_of_creation": self.updated_at.time().strftime("%I:%M %p") if self.updated_at else self.created_at.time().strftime("%I:%M %p"),
+            "date_of_creation": ist_timestamp.date(),
+            "time_of_creation": ist_timestamp.time().strftime("%I:%M %p"),
         }

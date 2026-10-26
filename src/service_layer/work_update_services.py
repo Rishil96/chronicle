@@ -3,7 +3,7 @@ This module contains all operations to be performed on the Chronicle Daily updat
 """
 from datetime import date, datetime, timedelta
 
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -112,12 +112,17 @@ def get_filtered_work_updates(session: Session,
     # Step 3: Apply topic filter
     if topic_id:
         stmt = stmt.where(WorkUpdates.topic_id == topic_id)
-    # Step 4: Date filter
+    # Convert date filter into IST timestamps
+    start_date, end_date = None, None
     if single_date:
-        stmt = stmt.where(func.date(WorkUpdates.created_at) == single_date)
-    # Step 5: Date Range filter
+        start_date = datetime.combine(single_date, datetime.min.time(), tzinfo=IST)
+        end_date = datetime.combine(single_date, datetime.max.time(), tzinfo=IST)
     elif from_date and to_date:
-        stmt = stmt.where(func.date(WorkUpdates.created_at) >= from_date).where(func.date(WorkUpdates.created_at) <= to_date)
-    # Step 6: Execute query and return list of work updates
+        start_date = datetime.combine(from_date, datetime.min.time(), tzinfo=IST)
+        end_date = datetime.combine(to_date, datetime.max.time(), tzinfo=IST)
+    # Step 4: Date filter
+    if start_date and end_date:
+        stmt = stmt.where(WorkUpdates.created_at >= start_date).where(WorkUpdates.created_at <= end_date)
+    # Step 5: Execute query and return list of work updates
     filtered_work_updates_list = session.execute(stmt.order_by(WorkUpdates.created_at.desc())).scalars().all()
     return list(filtered_work_updates_list)
