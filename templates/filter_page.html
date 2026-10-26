@@ -28,7 +28,10 @@
                             {% endfor %}
                     </select>
                 </div>
-                <button type="button" id="date-toggle" class="text-sm border border-brand text-brand bg-brand-soft px-3 py-1.5 rounded-lg font-medium hover:bg-brand-line cursor-pointer mb-3 w-full">Single Date</button>
+                <button type="button" id="date-toggle" class="text-sm border border-brand text-brand bg-brand-soft px-3 py-1.5 rounded-lg font-medium hover:bg-brand-line cursor-pointer mb-3 w-full flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-left"></i>
+                    <span id="date-toggle-label">Single Date</span>
+                </button>
                 <div id="single-date-div">
                     <label for="single-date" class="text-sm text-brand-dark font-medium mb-1 block">Date</label>
                     <input type="date" id="single-date" name="single_date" class="border border-brand-line rounded-lg px-3 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-brand-accent text-sm">
@@ -72,7 +75,8 @@
             singleDateDiv.classList.toggle("hidden");
             rangeDateDiv.classList.toggle("hidden");
             // Toggle Text content from main button
-            dateToggle.textContent = dateToggle.textContent === "Single Date" ? "Date Range" : "Single Date";
+            const toggleLabel = document.getElementById("date-toggle-label");
+            toggleLabel.textContent = toggleLabel.textContent === "Single Date" ? "Date Range" : "Single Date";
         });
 
         document.addEventListener("htmx:afterSwap", function() {
