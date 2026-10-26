@@ -61,7 +61,7 @@ def new_work_update(request: Request, db: Annotated[Session, Depends(get_db)], t
                 "description": description,
                 "selected_topic": topic_id,
                 "flash": {
-                    "message": "Date mismatch. Your update is kept below, so please submit again.",
+                    "message": "Date mismatch occurred while adding work update. Please submit again.",
                     "category": "error"
                 }
             }
